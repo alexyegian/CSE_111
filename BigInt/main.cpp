@@ -8,7 +8,7 @@
 #include <utility>
 using namespace std;
 
-//#include <unistd.h>
+#include <unistd.h>
 
 #include "bigint.h"
 #include "debug.h"
@@ -143,37 +143,37 @@ int main(int argc, char** argv) {
     ubigint x = 5;
     ubigint c = 10;
     ubigint f = c + x;
-    //exec::execname(argv[0]);
-    //scan_options(argc, argv);
-    //bigint_stack operand_stack;
-    //scanner input;
-    //try {
-    //    for (;;) {
-    //        try {
-    //            token lexeme = input.scan();
-    //            switch (lexeme.symbol) {
-    //            case tsymbol::SCANEOF:
-    //                throw ydc_quit();
-    //                break;
-    //            case tsymbol::NUMBER:
-    //                operand_stack.push(bigint(lexeme.lexinfo));
-    //                break;
-    //            case tsymbol::OPERATOR: {
-    //                char oper = lexeme.lexinfo[0];
-    //                do_function(operand_stack, oper);
-    //                break;
-    //            }
-    //            default:
-    //                assert(false);
-    //            }
-    //        }
-    //        catch (ydc_error& error) {
-    //            cout << exec::execname() << ": " << error.what() << endl;
-    //        }
-    //    }
-    //}
-    //catch (ydc_quit&) {
-    //    // Intentionally left empty.
-    //}
-    //return exec::status();
+    exec::execname(argv[0]);
+    scan_options(argc, argv);
+    bigint_stack operand_stack;
+    scanner input;
+    try {
+        for (;;) {
+            try {
+                token lexeme = input.scan();
+                switch (lexeme.symbol) {
+                case tsymbol::SCANEOF:
+                    throw ydc_quit();
+                    break;
+                case tsymbol::NUMBER:
+                    operand_stack.push(bigint(lexeme.lexinfo));
+                    break;
+                case tsymbol::OPERATOR: {
+                    char oper = lexeme.lexinfo[0];
+                    do_function(operand_stack, oper);
+                    break;
+                }
+                default:
+                    assert(false);
+                }
+            }
+            catch (ydc_error& error) {
+                cout << exec::execname() << ": " << error.what() << endl;
+            }
+        }
+    }
+    catch (ydc_quit&) {
+        // Intentionally left empty.
+    }
+    return exec::status();
 }
