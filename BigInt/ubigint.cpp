@@ -17,11 +17,13 @@ ubigint::ubigint(unsigned long that) : uvalue(that) {
 
 ubigint::ubigint(const string& that) : uvalue(0) {
     DEBUGF('~', "that = \"" << that << "\"");
+    int count = 0;
     for (char digit : that) {
         if (not isdigit(digit)) {
             throw invalid_argument("ubigint::ubigint(" + that + ")");
         }
-        uvalue = uvalue * 10 + digit - '0';
+        uvalue[count] = digit;
+        count++;
     }
 }
 
