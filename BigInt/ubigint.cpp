@@ -10,7 +10,7 @@ using namespace std;
 #include "debug.h"
 #include "relops.h"
 #include "ubigint.h"
-
+//TESTING
 ubigint::ubigint(unsigned long that) : uvalue(that) {
     DEBUGF('~', this << " -> " << uvalue)
 }
