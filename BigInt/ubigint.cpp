@@ -11,9 +11,9 @@ using namespace std;
 #include "relops.h"
 #include "ubigint.h"
 //TESTING
-ubigint::ubigint(unsigned long that) : uvalue(that) {
-    DEBUGF('~', this << " -> " << uvalue)
-}
+//ubigint::ubigint(unsigned long that) : uvalue(that) {
+//    DEBUGF('~', this << " -> " << uvalue)
+//}
 
 ubigint::ubigint(const string& that) : uvalue(0) {
     DEBUGF('~', "that = \"" << that << "\"");
@@ -27,28 +27,101 @@ ubigint::ubigint(const string& that) : uvalue(0) {
     }
 }
 
+//SMALLER VALUE GETS PASSED AS PASSED
+//
+//Add starting from least significant, carry over 1 number.IE: 8 + 8 = 16. This can be done easily like this.Add numbers(and carry number),
+//set carry number equal to result / 10, and set the number in that position equal to result % 10. Basically 5 + 7 + 1(carry bit) = 13. 
+//New carry bit is 13 / 10 = 1. And set that digit equal to 13 % 10 = 3.
+
+
+//CONTINUE IF ADD DIGIT ISNT 0 OR THAT VALUE.SIZE IS LESS THAN CTR
+
 ubigint ubigint::operator+ (const ubigint& that) const {
     DEBUGF('u', *this << "+" << that);
-    ubigint result(uvalue + that.uvalue);
-    DEBUGF('u', result);
-    return result;
+    ubigint ret_big = new ubigint;
+    int add_digit = 0;
+    int ctr = 0;
+    while (add_digit !=0 || that.uvalue.size() > ctr) {
+        int result = add_digit + that.uvalue[ctr] + this.uvalue[ctr];
+        ret_big.uvalue[ctr] = result % 10;
+        add_digit = result / 10;
+        ctr++;
+    }
+    DEBUGF('u', ret_big);
+    return ret_big;
 }
 
+//WE ASSUME THAT THE VALUE ON LEFT IS GREATER THAN VALUE ON RIGHT, THUS THAT IS SMALLER THAN THIS.
+//cycles through from least sig to most sig, and if that[ctr]>this[ctr], borrow ahead from this[ctr+1]
+//subtract 1 from this[ctr+1], and add 10 to result
 ubigint ubigint::operator- (const ubigint& that) const {
-    if (*this < that) throw domain_error("ubigint::operator-(a<b)");
-    return ubigint(uvalue - that.uvalue);
+    DEBUGF('u', *this << "-" << that);
+    ubigint ret_big = new ubigint;
+    int ctr = 0;
+    while (that.uvalue.size() > ctr) {
+        int result = this.uvalue[ctr] - that.uvalue[ctr];
+        if (result < 0) {
+            this.uvalue[ctr + 1] -= 1;
+            result += 10;
+        }
+        ret_big.uvalue[ctr] = result;
+        ctr++;
+    }
+    DEBUGF('u', ret_big);
+    return ret_big;
 }
+
+//Do digit multiplied by digit, with a carry bit.Resultand carry bit are obtained the same way. 8 * 8 = 64, carry bit for previous was 3, 
+//result now is 64 + 3 = 67. new carry bit is 67 / 10 = 6, that digit is now 67 % 10 = 7.
+//This gives the result of one multiplication ie.the 3 in 12 * 13. Still need to add it with the others.Way to do this is to have 2 bigints,
+//each store a result.Ie.one stores the 3 result in 12 * 13, and one stores the 1 result in 12 * 13. Then once both are full, add them 
+//together and store in one of the two.
+//Then for next multiplication step override the one not in use.
+//Ie. 123 * 456: Store result of 123 * 6 in result 1. Then store result of 123 * 50 in result 2. Then add and store addition in result 1.
+//Then store result of 123 * 400 in result 2. Then add and store addition in result 1. Then return that value.
+//Or could just make starting digit equal to digit 2 place, and add 1 each time.Ie : 12 * 13, starting digit place for 12 * 3 is 0, starting digit place for 12 * 10 is 1.
+
 
 ubigint ubigint::operator* (const ubigint& that) const {
-    return ubigint(uvalue * that.uvalue);
+    DEBUGF('u', *this << "+" << that);
+    ubigint ret_big = new ubigint;
+    ubigint temp_big = new ubigint;
+    int carry_digit = 0;
+    int ctr = 0;
+    while (that.uvalue.size() > ctr) {
+        int ctr2 = 0;
+        while (add_digit != 0 || this.uvalue.size() > ctr2) {
+            int result = carry_digit + (that.uvalue[ctr2] * this.uvalue[ctr]);
+            temp_big.uvalue[ctr+ctr2] = result % 10;
+            carry_digit = result / 10;
+            ctr2++;
+        }
+        ret_big = ret_big + temp_big;
+        ctr++;
+    }
+    DEBUGF('u', ret_big);
+    return ret_big;
 }
 
 void ubigint::multiply_by_2() {
-    uvalue *= 2;
+    //making new ubigint with just 2 in it
+    ubigint ret_big = new ubigint("2");
+    this = this * ret_big;
 }
 
+
+//I ASSUME REMAINDER IS DISCARDED, AS THERER IS NO ROOM FOR IT
+//LOOP THROUGH ALL VALUES IN UVALUE, FOR EACH VALUE IF VALUE%2 == 1
+//ADD 5 TO VALUE[CTR-1], UNLESS CTR IS 0, IN WHICH CASE DISCARD
+//THEN DIVIDE THE VALUE BY 2
 void ubigint::divide_by_2() {
-    uvalue /= 2;
+    int ctr = 0;
+    while (uvalue.size() > ctr) {
+        if (uvalue[ctr] % 2 == 1 && ctr != 0) {
+            uvalue[ctr - 1] += 5;
+        }
+        uvalue[ctr] = uvalue[ctr] / 2;
+    }
 }
 
 

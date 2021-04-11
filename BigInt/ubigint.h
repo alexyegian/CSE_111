@@ -7,6 +7,7 @@
 #include <iostream>
 #include <limits>
 #include <utility>
+#include <vector>
 using namespace std;
 
 #include "debug.h"
@@ -21,7 +22,7 @@ public:
     void divide_by_2();
 
     ubigint() = default; // Need default ctor as well.
-    ubigint(unsigned long);
+    //ubigint(unsigned long);
     ubigint(const string&);
 
     ubigint operator+ (const ubigint&) const;
