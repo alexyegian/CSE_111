@@ -15,8 +15,7 @@ using namespace std;
 class ubigint {
     friend ostream& operator<< (ostream&, const ubigint&);
 private:
-    using unumber = unsigned long;
-    unumber uvalue{};
+    vector<uint8_t> uvalue;
 public:
     void multiply_by_2();
     void divide_by_2();
