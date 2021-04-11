@@ -28,7 +28,11 @@ bool debugflags::getflag(char flag) {
 
 void debugflags::where(char flag, const char* file, int line,
     const char* pretty_function) {
-    cerr << exec::execname() << ": DEBUG(" << flag << ") "
-        << file << "[" << line << "] " << endl
-        << "   " << pretty_function << endl;
+    //PRINT LINE TO GET RID OF UNUSED PARAM WARNING
+    printf("%c%s%d%s\n", flag, file, line, pretty_function);
+
+
+    //cerr << exec::execname() << ": DEBUG(" << flag << ") "
+    //    << file << "[" << line << "] " << endl
+    //    << "   " << pretty_function << endl;
 }

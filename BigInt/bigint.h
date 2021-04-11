@@ -14,7 +14,7 @@ using namespace std;
 #include "ubigint.h"
 
 class bigint {
-    friend ostream& operator<< (ostream&, const bigint&);
+   // friend ostream& operator<< (ostream&, const bigint&);
 private:
     ubigint uvalue;
     bool is_negative{ false };

@@ -13,7 +13,7 @@ bigint pow(const bigint& base_arg, const bigint& exponent_arg) {
     static const bigint ZERO(0);
     static const bigint ONE(1);
     static const bigint TWO(2);
-    DEBUGF('^', "base = " << base << ", exponent = " << exponent);
+    //DEBUGF('^', "base = " << base << ", exponent = " << exponent);
     if (base == ZERO) return ZERO;
     bigint result = ONE;
     if (exponent < ZERO) {
@@ -30,6 +30,6 @@ bigint pow(const bigint& base_arg, const bigint& exponent_arg) {
             exponent = exponent / 2;
         }
     }
-    DEBUGF('^', "result = " << result);
+    //DEBUGF('^', "result = " << result);
     return result;
 }

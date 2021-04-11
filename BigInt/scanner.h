@@ -30,8 +30,8 @@ public:
     token scan();
 };
 
-ostream& operator<< (ostream&, tsymbol);
-ostream& operator<< (ostream&, const token&);
+//ostream& operator<< (ostream&, tsymbol);
+//ostream& operator<< (ostream&, const token&);
 
 #endif
 #pragma once

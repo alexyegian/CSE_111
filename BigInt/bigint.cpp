@@ -9,7 +9,7 @@ using namespace std;
 #include "bigint.h"
 
 bigint::bigint(long that) : uvalue(that), is_negative(that < 0) {
-    DEBUGF('~', this << " -> " << uvalue)
+    //DEBUGF('~', this << " -> " << uvalue)
 }
 
 bigint::bigint(const ubigint& uvalue_, bool is_negative_) :
@@ -65,7 +65,7 @@ bool bigint::operator< (const bigint& that) const {
         : uvalue < that.uvalue;
 }
 
-ostream& operator<< (ostream& out, const bigint& that) {
-    return out << "bigint(" << (that.is_negative ? "-" : "+")
-        << "," << that.uvalue << ")";
-}
+//ostream& operator<< (ostream& out, const bigint& that) {
+//    return out << "bigint(" << (that.is_negative ? "-" : "+")
+//        << "," << that.uvalue << ")";
+//}

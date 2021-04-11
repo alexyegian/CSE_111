@@ -13,15 +13,16 @@ using namespace std;
 #include "debug.h"
 
 class ubigint {
-    friend ostream& operator<< (ostream&, const ubigint&);
+    //friend ostream& operator<< (ostream&, const ubigint&);
 private:
     vector<uint8_t> uvalue;
 public:
     void multiply_by_2();
     void divide_by_2();
 
-    ubigint() = default; // Need default ctor as well.
-    //ubigint(unsigned long);
+    ubigint();
+    //ubigint() = default; // Need default ctor as well.
+    ubigint(unsigned long);
     ubigint(const string&);
 
     ubigint operator+ (const ubigint&) const;

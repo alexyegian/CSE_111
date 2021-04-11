@@ -34,10 +34,10 @@ void do_arith(bigint_stack& stack, const char oper) {
     if (stack.size() < 2) throw ydc_error("stack empty");
     bigint right = stack.top();
     stack.pop();
-    DEBUGF('d', "right = " << right);
+    //DEBUGF('d', "right = " << right);
     bigint left = stack.top();
     stack.pop();
-    DEBUGF('d', "left = " << left);
+    //DEBUGF('d', "left = " << left);
     bigint result;
     switch (oper) {
     case '+': result = left + right; break;
@@ -48,35 +48,35 @@ void do_arith(bigint_stack& stack, const char oper) {
     case '^': result = pow(left, right); break;
     default: throw invalid_argument("do_arith operator "s + oper);
     }
-    DEBUGF('d', "result = " << result);
+    //DEBUGF('d', "result = " << result);
     stack.push(result);
 }
 
 void do_clear(bigint_stack& stack, const char) {
-    DEBUGF('d', "");
+    //DEBUGF('d', "");
     stack.clear();
 }
 
 
-void do_dup(bigint_stack& stack, const char) {
-    if (stack.size() < 1) throw ydc_error("stack empty");
-    bigint top = stack.top();
-    DEBUGF('d', top);
-    stack.push(top);
-}
-
-void do_printall(bigint_stack& stack, const char) {
-    for (const auto& elem : stack) cout << elem << endl;
-}
-
-void do_print(bigint_stack& stack, const char) {
-    if (stack.size() < 1) throw ydc_error("stack empty");
-    cout << stack.top() << endl;
-}
-
-void do_debug(bigint_stack&, const char) {
-    cout << "Y not implemented" << endl;
-}
+//void do_dup(bigint_stack& stack, const char) {
+//    if (stack.size() < 1) throw ydc_error("stack empty");
+//    bigint top = stack.top();
+//    //DEBUGF('d', top);
+//    stack.push(top);
+//}
+//
+//void do_printall(bigint_stack& stack, const char) {
+//    for (const auto& elem : stack) cout << elem << endl;
+//}
+//
+//void do_print(bigint_stack& stack, const char) {
+//    if (stack.size() < 1) throw ydc_error("stack empty");
+//    cout << stack.top() << endl;
+//}
+//
+//void do_debug(bigint_stack&, const char) {
+//    cout << "Y not implemented" << endl;
+//}
 
 class ydc_quit : public exception {};
 void do_quit(bigint_stack&, const char) {
@@ -100,11 +100,11 @@ void do_function(bigint_stack& stack, const char oper) {
     case '/': do_arith(stack, oper); break;
     case '%': do_arith(stack, oper); break;
     case '^': do_arith(stack, oper); break;
-    case 'Y': do_debug(stack, oper); break;
+    //case 'Y': do_debug(stack, oper); break;
     case 'c': do_clear(stack, oper); break;
-    case 'd': do_dup(stack, oper); break;
-    case 'f': do_printall(stack, oper); break;
-    case 'p': do_print(stack, oper); break;
+    //case 'd': do_dup(stack, oper); break;
+    //case 'f': do_printall(stack, oper); break;
+    //case 'p': do_print(stack, oper); break;
     case 'q': do_quit(stack, oper); break;
     default: throw ydc_error(unimplemented(oper));
     }
@@ -122,16 +122,16 @@ void scan_options(int argc, char** argv) {
         if (option == EOF) break;
         switch (option) {
         case '@':
-            debugflags::setflags(optarg);
+            //debugflags::setflags(optarg);
             break;
         default:
-            error() << "-" << static_cast<char> (optopt)
-                << ": invalid option" << endl;
-            break;
+           // error() << "-" << static_cast<char> (optopt)
+           //     << ": invalid option" << endl;
+           break;
         }
     }
     if (optind < argc) {
-        error() << "operand not permitted" << endl;
+        //error() << "operand not permitted" << endl;
     }
 }
 
@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
                 }
             }
             catch (ydc_error& error) {
-                cout << exec::execname() << ": " << error.what() << endl;
+                //cout << exec::execname() << ": " << error.what() << endl;
             }
         }
     }

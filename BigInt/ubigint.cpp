@@ -11,12 +11,25 @@ using namespace std;
 #include "relops.h"
 #include "ubigint.h"
 //TESTING
-//ubigint::ubigint(unsigned long that) : uvalue(that) {
-//    DEBUGF('~', this << " -> " << uvalue)
-//}
+ubigint::ubigint() {
+    //uvalue = new vector<uint8_t>;
+}
+ubigint::ubigint(unsigned long value){
+    // DEBUGF('~', this << " -> " << uvalue)
+    //uvalue = new vector<uint8_t>;
+    int mod_val = 10;
+    int ctr = 0;
+    while (value != 0) {
+        uvalue[ctr] = value % mod_val;
+        value -= value % mod_val;
+        mod_val *= 10;
+        ctr++;
+    }
+}
 
-ubigint::ubigint(const string& that) : uvalue(0) {
-    DEBUGF('~', "that = \"" << that << "\"");
+ubigint::ubigint(const string& that){
+    // DEBUGF('~', "that = \"" << that << "\"");
+    //uvalue = new vector<uint8_t>;
     int count = 0;
     for (char digit : that) {
         if (not isdigit(digit)) {
@@ -37,37 +50,49 @@ ubigint::ubigint(const string& that) : uvalue(0) {
 //CONTINUE IF ADD DIGIT ISNT 0 OR THAT VALUE.SIZE IS LESS THAN CTR
 
 ubigint ubigint::operator+ (const ubigint& that) const {
-    DEBUGF('u', *this << "+" << that);
-    ubigint ret_big = new ubigint;
+    //DEBUGF('u', *this << "+" << that);
+    //ubigint ret_big = new ubigint();
+    ubigint ret_big;
     int add_digit = 0;
     int ctr = 0;
     while (add_digit !=0 || that.uvalue.size() > ctr) {
-        int result = add_digit + that.uvalue[ctr] + this.uvalue[ctr];
+        int result = add_digit + that.uvalue[ctr] + uvalue[ctr];
         ret_big.uvalue[ctr] = result % 10;
         add_digit = result / 10;
         ctr++;
     }
-    DEBUGF('u', ret_big);
+    //DEBUGF('u', ret_big);
     return ret_big;
 }
 
 //WE ASSUME THAT THE VALUE ON LEFT IS GREATER THAN VALUE ON RIGHT, THUS THAT IS SMALLER THAN THIS.
 //cycles through from least sig to most sig, and if that[ctr]>this[ctr], borrow ahead from this[ctr+1]
 //subtract 1 from this[ctr+1], and add 10 to result
+
+//10
+//-9
+//--
+// 1
 ubigint ubigint::operator- (const ubigint& that) const {
-    DEBUGF('u', *this << "-" << that);
-    ubigint ret_big = new ubigint;
+    //DEBUGF('u', *this << "-" << that);
+    //ubigint ret_big = new ubigint();
+    ubigint ret_big;
+    //ubigint one_big = 1;
     int ctr = 0;
-    while (that.uvalue.size() > ctr) {
-        int result = this.uvalue[ctr] - that.uvalue[ctr];
+    int sub_num = 0;
+    while (sub_num != 0 || that.uvalue.size() > ctr) {
+        int result = uvalue[ctr] - that.uvalue[ctr]-sub_num;
         if (result < 0) {
-            this.uvalue[ctr + 1] -= 1;
+            sub_num = 1;
             result += 10;
+        }
+        else {
+            sub_num = 0;
         }
         ret_big.uvalue[ctr] = result;
         ctr++;
     }
-    DEBUGF('u', ret_big);
+    //DEBUGF('u', ret_big);
     return ret_big;
 }
 
@@ -83,15 +108,17 @@ ubigint ubigint::operator- (const ubigint& that) const {
 
 
 ubigint ubigint::operator* (const ubigint& that) const {
-    DEBUGF('u', *this << "+" << that);
-    ubigint ret_big = new ubigint;
-    ubigint temp_big = new ubigint;
+    //DEBUGF('u', *this << "+" << that);
+    //ubigint ret_big = new ubigint();
+    //ubigint temp_big = new ubigint();    
+    ubigint ret_big;
+    ubigint temp_big;
     int carry_digit = 0;
     int ctr = 0;
     while (that.uvalue.size() > ctr) {
         int ctr2 = 0;
-        while (add_digit != 0 || this.uvalue.size() > ctr2) {
-            int result = carry_digit + (that.uvalue[ctr2] * this.uvalue[ctr]);
+        while (carry_digit != 0 || uvalue.size() > ctr2) {
+            int result = carry_digit + (that.uvalue[ctr2] * uvalue[ctr]);
             temp_big.uvalue[ctr+ctr2] = result % 10;
             carry_digit = result / 10;
             ctr2++;
@@ -99,14 +126,16 @@ ubigint ubigint::operator* (const ubigint& that) const {
         ret_big = ret_big + temp_big;
         ctr++;
     }
-    DEBUGF('u', ret_big);
+    //DEBUGF('u', ret_big);
     return ret_big;
 }
 
 void ubigint::multiply_by_2() {
     //making new ubigint with just 2 in it
-    ubigint ret_big = new ubigint("2");
-    this = this * ret_big;
+
+
+    //const ubigint ret_big = new ubigint("2");
+    //this = this*ret_big;
 }
 
 
@@ -146,8 +175,8 @@ quo_rem udivide(const ubigint& dividend, const ubigint& divisor_) {
         divisor.divide_by_2();
         power_of_2.divide_by_2();
     }
-    DEBUGF('/', "quotient = " << quotient);
-    DEBUGF('/', "remainder = " << remainder);
+    //DEBUGF('/', "quotient = " << quotient);
+    //DEBUGF('/', "remainder = " << remainder);
     return { .quotient = quotient, .remainder = remainder };
 }
 
@@ -167,6 +196,6 @@ bool ubigint::operator< (const ubigint& that) const {
     return uvalue < that.uvalue;
 }
 
-ostream& operator<< (ostream& out, const ubigint& that) {
-    return out << "ubigint(" << that.uvalue << ")";
-}
+//ostream& operator<< (ostream& out, const ubigint& that) {
+//    return out << "ubigint(" << that.uvalue << ")";
+//}
