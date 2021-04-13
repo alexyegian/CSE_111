@@ -19,7 +19,7 @@ ubigint::ubigint(unsigned long value){
     int mod_val = 10;
     int ctr = 0;
     while (value != 0) {
-        uvalue[ctr] = value % mod_val;
+        uvalue.push_back(value % mod_val);
         value -= value % mod_val;
         mod_val *= 10;
         ctr++;
@@ -27,7 +27,7 @@ ubigint::ubigint(unsigned long value){
 }
 
 ubigint::ubigint(const string& that){
-     DEBUGF('~', "that = \"" << that << "\"");
+     //DEBUGF('~', "that = \"" << that << "\"");
     for (char digit : that) {
         if (not isdigit(digit)) {
             throw invalid_argument("ubigint::ubigint(" + that + ")");

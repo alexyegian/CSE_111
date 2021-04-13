@@ -140,40 +140,46 @@ void scan_options(int argc, char** argv) {
 // Main function.
 //
 int main(int argc, char** argv) {
+    printf("PART 1 %d, %p\n", argc, static_cast<void*>(argv));
     ubigint x = 5;
-    ubigint c = 10;
-    ubigint f = c + x;
-    exec::execname(argv[0]);
-    scan_options(argc, argv);
-    bigint_stack operand_stack;
-    scanner input;
-    try {
-        for (;;) {
-            try {
-                token lexeme = input.scan();
-                switch (lexeme.symbol) {
-                case tsymbol::SCANEOF:
-                    throw ydc_quit();
-                    break;
-                case tsymbol::NUMBER:
-                    operand_stack.push(bigint(lexeme.lexinfo));
-                    break;
-                case tsymbol::OPERATOR: {
-                    char oper = lexeme.lexinfo[0];
-                    do_function(operand_stack, oper);
-                    break;
-                }
-                default:
-                    assert(false);
-                }
-            }
-            catch (ydc_error& error) {
-                cout << exec::execname() << ": " << error.what() << endl;
-            }
-        }
-    }
-    catch (ydc_quit&) {
-        // Intentionally left empty.
-    }
-    return exec::status();
+    //printf("PART 2");
+    //ubigint c = 10;
+    //printf("PART 3");
+    //ubigint f = c + x;
+    //printf("PART 4");
+    //exec::execname(argv[0]);
+    //printf("PART 5");
+    //scan_options(argc, argv);
+    //printf("PART 6");
+    //bigint_stack operand_stack;
+    //scanner input;
+    //try {
+    //    for (;;) {
+    //        try {
+    //            token lexeme = input.scan();
+    //            switch (lexeme.symbol) {
+    //            case tsymbol::SCANEOF:
+    //                throw ydc_quit();
+    //                break;
+    //            case tsymbol::NUMBER:
+    //                operand_stack.push(bigint(lexeme.lexinfo));
+    //                break;
+    //            case tsymbol::OPERATOR: {
+    //                char oper = lexeme.lexinfo[0];
+    //                do_function(operand_stack, oper);
+    //                break;
+    //            }
+    //            default:
+    //                assert(false);
+    //            }
+    //        }
+    //        catch (ydc_error& error) {
+    //            cout << exec::execname() << ": " << error.what() << endl;
+    //        }
+    //    }
+    //}
+    //catch (ydc_quit&) {
+    //    // Intentionally left empty.
+    //}
+    //return exec::status();
 }
