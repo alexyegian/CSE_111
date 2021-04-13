@@ -123,6 +123,15 @@ ubigint ubigint::operator- (const ubigint& that) const {
         ret_big.uvalue.push_back(result);
         ctr++;
     }
+    for (int i = ret_big.uvalue.size() - 1; i > 0; i--) {
+        if (ret_big.uvalue[i] == 0) {
+            printf("SUBTRACTING POPPING\n");
+            ret_big.uvalue.pop_back();
+        }
+        else {
+            break;
+        }
+    }
     //DEBUGF('u', ret_big);
     return ret_big;
 }
@@ -166,8 +175,21 @@ ubigint ubigint::operator* (const ubigint& that) const {
 }
 
 void ubigint::multiply_by_2() {
+    //printf("\n\n\nMULTIPLYING BY 2\n\n");
+    //printf("START\n");
+    int ctr = 0;
+    while (uvalue.size() > static_cast<unsigned>(ctr)) {
+       // printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
+        ctr++;
+    }
     ubigint two = 2;
     *this = *this * two;
+   // printf("END\n");
+    ctr = 0;
+    while (uvalue.size() > static_cast<unsigned>(ctr)) {
+        //printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
+        ctr++;
+    }
 }
 
 
@@ -175,8 +197,17 @@ void ubigint::multiply_by_2() {
 //LOOP THROUGH ALL VALUES IN UVALUE, FOR EACH VALUE IF VALUE%2 == 1
 //ADD 5 TO VALUE[CTR-1], UNLESS CTR IS 0, IN WHICH CASE DISCARD
 //THEN DIVIDE THE VALUE BY 2
+
+//NEED TO POP ALL VALUES THAT ARE 0 FROM END, IE VECTOR 100 SIZE 3, DIVIDED BY 2 IS 050, SIZE 3, SHOULD BE 50, SIZE 2.
 void ubigint::divide_by_2() {
+    //printf("\n\n\nDIVIDING BY 2\n\n");
+    //printf("START\n");
     int ctr = 0;
+    while (uvalue.size() > static_cast<unsigned>(ctr)) {
+        //printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
+        ctr++;
+    }
+    ctr = 0;
     while (uvalue.size() > static_cast<unsigned>(ctr)) {
         if (uvalue[ctr] % 2 == 1 && ctr != 0) {
             uvalue[ctr - 1] += 5;
@@ -184,7 +215,21 @@ void ubigint::divide_by_2() {
         uvalue[ctr] = uvalue[ctr] / 2;
         ctr++;
     }
+    //TRYING TO POP FROM END
+    for (int i = uvalue.size() - 1; i >= 0; i--) {
+        if (uvalue[i] == 0) {
+            uvalue.pop_back();
+        }
+        else {
+            break;
+        }
+    }
     ctr = 0;
+    //printf("\nEND\n");
+    while (uvalue.size() > static_cast<unsigned>(ctr)) {
+        //printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
+        ctr++;
+    }
 }
 
 
@@ -192,19 +237,33 @@ struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide(const ubigint& dividend, const ubigint& divisor_) {
     // NOTE: udivide is a non-member function.
     ubigint divisor{ divisor_ };
+    //5
     ubigint zero{ 0 };
     if (divisor == zero) throw domain_error("udivide by zero");
     ubigint power_of_2{ 1 };
     ubigint quotient{ 0 };
     ubigint remainder{ dividend }; // left operand, dividend
+    //20
     while (divisor < remainder) {
         divisor.multiply_by_2();
+        //10
+        //20
         power_of_2.multiply_by_2();
+        //2
+        //4
     }
+    printf("MIDPOINT\n\n");
+    //divisor: 20, power of 2: 4. remainder: 20
     while (power_of_2 > zero) {
+        printf("DIVISOR: %s\n", divisor.makeString().c_str());
+        printf("REMAINDER: %s\n", remainder.makeString().c_str());
+        printf("POWER OF 2: %s\n", power_of_2.makeString().c_str());
         if (divisor <= remainder) {
+            printf("GO HERE\n");
             remainder = remainder - divisor;
             quotient = quotient + power_of_2;
+            printf("QUO: %s\n", quotient.makeString().c_str());
+            printf("REM: %s\n", remainder.makeString().c_str());
         }
         divisor.divide_by_2();
         power_of_2.divide_by_2();

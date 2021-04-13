@@ -56,15 +56,26 @@ bigint bigint::operator% (const bigint& that) const {
 }
 
 bool bigint::operator== (const bigint& that) const {
-    return is_negative == that.is_negative and uvalue == that.uvalue;
+    string thisString = this->uvalue.makeString();
+    string thatString = that.uvalue.makeString();
+
+    if (thisString == thatString)
+    {
+        return true;
+    }
+    return false;
 }
 
 bool bigint::operator< (const bigint& that) const {
-    if (is_negative != that.is_negative) return is_negative;
-    return is_negative ? uvalue > that.uvalue
-        : uvalue < that.uvalue;
-}
+    string thisString = this->uvalue.makeString();
+    string thatString = that.uvalue.makeString();
 
+    if (thisString < thatString)
+    {
+        return true;
+    }
+    return false;
+}
 string bigint::makeString() const {
     ubigint holder = this->uvalue;
     return holder.makeString();
