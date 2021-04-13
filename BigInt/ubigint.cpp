@@ -17,7 +17,7 @@ ubigint::ubigint() {
 ubigint::ubigint(unsigned long value){
     // DEBUGF('~', this << " -> " << uvalue)
     int ctr = 0;
-    while (value != 0) {
+    while (value != 0 || ctr == 0) {
         uvalue.push_back(value % 10);
         value -= value % 10;
         value = value / 10;
@@ -216,7 +216,7 @@ void ubigint::divide_by_2() {
         ctr++;
     }
     //TRYING TO POP FROM END
-    for (int i = uvalue.size() - 1; i >= 0; i--) {
+    for (int i = uvalue.size() - 1; i > 0; i--) {
         if (uvalue[i] == 0) {
             uvalue.pop_back();
         }
@@ -258,7 +258,7 @@ quo_rem udivide(const ubigint& dividend, const ubigint& divisor_) {
         printf("DIVISOR: %s\n", divisor.makeString().c_str());
         printf("REMAINDER: %s\n", remainder.makeString().c_str());
         printf("POWER OF 2: %s\n", power_of_2.makeString().c_str());
-        if (divisor <= remainder) {
+        if (divisor < remainder || divisor == remainder) {
             printf("GO HERE\n");
             remainder = remainder - divisor;
             quotient = quotient + power_of_2;
@@ -282,45 +282,54 @@ ubigint ubigint::operator% (const ubigint& that) const {
 }
 
 bool ubigint::operator== (const ubigint& that) const {
-    if (this->uvalue.size() < that.uvalue.size() || this->uvalue.size() > that.uvalue.size()) 
-    {
-        return false;
-    }
+    string thisString = this->makeString();
+    string thatString = that.makeString();
+    cout << "EQUAL OPERATOR: " << thisString << " " << thatString << ": ";
 
-    int count = 0;
-    while (static_cast<unsigned>(count) < this->uvalue.size())
+    if (thisString == thatString)
     {
-        if (this->uvalue[count] > that.uvalue[count] || this->uvalue[count] < that.uvalue[count])
-        {
-            return false;
-        }
-        count++;
+        cout << "TRUE" << endl;
+        return true;
     }
-    return true;
+    cout << "FALSE" << endl;
+    return false;
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-    if (this->uvalue.size() < that.uvalue.size())
+    string thisString = this->makeString();
+    string thatString = that.makeString();
+    cout << "LESS THAN OPERATOR: " << thisString << " " << thatString << ": ";
+    
+    if(thisString.size() < thatString.size())
     {
+        cout << "TRUE" << endl;
         return true;
     }
-    if (this->uvalue.size() > that.uvalue.size())
+    if (thisString.size() > thatString.size())
     {
+        cout << "FALSE" << endl;
         return false;
     }
-    int count = 0;
-    while (static_cast<unsigned>(count) < this->uvalue.size())
+    unsigned long count = 0;
+    while (count < thisString.size())
     {
-        if (this->uvalue[count] < that.uvalue[count])
+        char thisChar = thisString[thisString.size() - 1 - count];
+        char thatChar = thatString[thatString.size() - 1 - count];
+        int thisInt = thisChar - '0';
+        int thatInt = thatChar - '0';
+        if (thisInt < thatInt)
         {
+            cout << "TRUE" << endl;
             return true;
         }
-        if (this->uvalue[count] > that.uvalue[count])
+        if (thisInt > thatInt)
         {
+            cout << "FALSE" << endl;
             return false;
         }
         count++;
     }
+    cout << "FALSE" << endl;
     return false;
 }
 
