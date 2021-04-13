@@ -16,25 +16,54 @@ ubigint::ubigint() {
 }
 ubigint::ubigint(unsigned long value){
     // DEBUGF('~', this << " -> " << uvalue)
-    int mod_val = 10;
     int ctr = 0;
     while (value != 0) {
-        uvalue.push_back(value % mod_val);
-        value -= value % mod_val;
-        mod_val *= 10;
+        uvalue.push_back(value % 10);
+        value -= value % 10;
+        value = value / 10;
+        printf("VALUE AT: CTR: %d IS %d\n", ctr, uvalue[ctr]);
         ctr++;
     }
 }
 
-ubigint::ubigint(const string& that){
-     //DEBUGF('~', "that = \"" << that << "\"");
-    for (char digit : that) {
-        if (not isdigit(digit)) {
+
+//ubigint::ubigint(const string& that) {
+//    DEBUGF('~', "that = "" << that << """);
+//    int count = 0;
+//    while (count < static_cast<int>(that.size())) {
+//        if (not isdigit(that[count])) {
+//            throw invalid_argument("ubigint::ubigint(" + that + ")");
+//        }
+//        uvalue.push_back(that[count] - '0');
+//        printf("VALUE AT: CTR: %d IS %d\n", count, uvalue[count]);
+//        count++;
+//    }
+//}
+ubigint::ubigint(const string& that) {
+    DEBUGF('~', "that = "" << that << """);
+    int count = 0;
+    while (static_cast<unsigned>(count) < that.size()) {
+        if (not isdigit(that[that.size() - count - 1])) {
             throw invalid_argument("ubigint::ubigint(" + that + ")");
         }
-        uvalue.push_back(digit - '0');
+        uvalue.push_back(that[that.size() - count - 1] - '0');
+        printf("VALUE AT: CTR: %d IS %d\n", count, uvalue[count]);
+        count++;
     }
 }
+
+// ubigint::ubigint(const string& that){
+//     //DEBUGF('~', "that = \"" << that << "\"");
+//    int ctr = 0;
+//    for (char digit : that) {
+//        if (not isdigit(digit)) {
+//            throw invalid_argument("ubigint::ubigint(" + that + ")");
+//        }
+//        uvalue.push_back(digit - '0');
+//        printf("VALUE AT: CTR: %d IS %d\n", ctr, uvalue[ctr]);
+//        ctr++;
+//    }
+//}
 
 //SMALLER VALUE GETS PASSED AS PASSED
 //
@@ -49,16 +78,39 @@ ubigint::ubigint(const string& that){
 ubigint ubigint::operator+ (const ubigint& that) const {
     //DEBUGF('u', *this << "+" << that);
     //ubigint ret_big = new ubigint();
+    printf("THAT SIZE: %d\n", static_cast<int>(that.uvalue.size()));
     ubigint ret_big;
     int add_digit = 0;
     int ctr = 0;
     while (add_digit !=0 || that.uvalue.size() > static_cast<unsigned>(ctr)) {
         int result = add_digit + that.uvalue[ctr] + uvalue[ctr];
-        ret_big.uvalue[ctr] = result % 10;
+        ret_big.uvalue.push_back(result % 10);
         add_digit = result / 10;
+        printf("RESULT: %d RESULT MOD: %d ADD DIGIT: %d\n", result, (result % 10), (result / 10));
         ctr++;
     }
-    //DEBUGF('u', ret_big);
+    ////DEBUGF('u', ret_big);
+
+    //REVERSE AT END
+    printf("\n\nBEFORE\n\n");
+    ctr = 0;
+    while (ret_big.uvalue.size() > static_cast<unsigned>(ctr)) {
+        printf("%d", ret_big.uvalue[ctr]);
+        ctr++;
+    }
+    printf("\n\nAFTER\n\n");
+    ctr = 0;
+    while (ret_big.uvalue.size()/2 > static_cast<unsigned>(ctr)) {
+        uint8_t temp = ret_big.uvalue[ret_big.uvalue.size() - 1 - ctr];
+        ret_big.uvalue[ret_big.uvalue.size() - 1 - ctr] = ret_big.uvalue[ctr];
+        ret_big.uvalue[ctr] = temp;
+        ctr++;
+    }
+    ctr = 0;
+    while (ret_big.uvalue.size() > static_cast<unsigned>(ctr)) {
+        printf("%d", ret_big.uvalue[ctr]);
+        ctr++;
+    }
     return ret_big;
 }
 
@@ -86,10 +138,13 @@ ubigint ubigint::operator- (const ubigint& that) const {
         else {
             sub_num = 0;
         }
-        ret_big.uvalue[ctr] = result;
+        //ret_big.uvalue[ctr] = result;
+        ret_big.uvalue.push_back(result);
         ctr++;
     }
     //DEBUGF('u', ret_big);
+
+    //REVERSE AT END
     return ret_big;
 }
 
@@ -114,13 +169,18 @@ ubigint ubigint::operator* (const ubigint& that) const {
     int ctr = 0;
     while (that.uvalue.size() > static_cast<unsigned>(ctr)) {
         int ctr2 = 0;
+        for (int i = 0; i < ctr; i++) {
+            temp_big.uvalue.push_back(0);
+        }
         while (carry_digit != 0 || uvalue.size() > static_cast<unsigned>(ctr2)) {
             int result = carry_digit + (that.uvalue[ctr2] * uvalue[ctr]);
-            temp_big.uvalue[ctr+ctr2] = result % 10;
+            //temp_big.uvalue[ctr+ctr2] = result % 10;
+            temp_big.uvalue.push_back(result % 10);
             carry_digit = result / 10;
             ctr2++;
         }
         ret_big = ret_big + temp_big;
+        temp_big = 0;
         ctr++;
     }
     //DEBUGF('u', ret_big);
@@ -143,6 +203,7 @@ void ubigint::divide_by_2() {
         if (uvalue[ctr] % 2 == 1 && ctr != 0) {
             uvalue[ctr - 1] += 5;
         }
+        //uvalue[ctr] = uvalue[ctr] / 2;
         uvalue[ctr] = uvalue[ctr] / 2;
     }
 }

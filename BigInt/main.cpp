@@ -142,11 +142,17 @@ void scan_options(int argc, char** argv) {
 int main(int argc, char** argv) {
     printf("PART 1 %d, %p\n", argc, static_cast<void*>(argv));
     ubigint x = 5;
-    //printf("PART 2");
-    //ubigint c = 10;
-    //printf("PART 3");
-    //ubigint f = c + x;
-    //printf("PART 4");
+    printf("PART 2");
+    ubigint c = 412;
+    printf("PART 3\n\n");
+    string str = "";
+    str.append("6");
+    str.append("5");
+    str.append("4");
+    printf("MAKING STRING: %s\n", str.c_str());
+    ubigint d = str;
+    ubigint f = d + c;
+    printf("PART 4");
     //exec::execname(argv[0]);
     //printf("PART 5");
     //scan_options(argc, argv);
