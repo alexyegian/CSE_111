@@ -5,7 +5,7 @@
 #include <stack>
 #include <stdexcept>
 using namespace std;
-//asdf
+
 #include "bigint.h"
 
 bigint::bigint(long that) : uvalue(that), is_negative(that < 0) {
@@ -65,7 +65,16 @@ bool bigint::operator< (const bigint& that) const {
         : uvalue < that.uvalue;
 }
 
-//ostream& operator<< (ostream& out, const bigint& that) {
-//    return out << "bigint(" << (that.is_negative ? "-" : "+")
-//        << "," << that.uvalue << ")";
-//}
+void bigint::makeString() {
+    this->uvalue.makeString();
+    this->uvalueString = this->uvalue.uvalueString;
+}
+bool bigint::returnIs_negative() {
+    return this->is_negative;
+}
+ostream& operator<< (ostream& out, bigint& that) {
+    that.makeString();
+    string returnString = that.uvalueString;
+    return out << "bigint(" << (that.returnIs_negative() ? "-" : "+")
+        << "," << returnString << ")";
+}

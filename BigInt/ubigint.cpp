@@ -5,6 +5,7 @@
 #include <exception>
 #include <stack>
 #include <stdexcept>
+#include <string>
 using namespace std;
 
 #include "debug.h"
@@ -12,11 +13,9 @@ using namespace std;
 #include "ubigint.h"
 //TESTING
 ubigint::ubigint() {
-    //uvalue = new vector<uint8_t>;
 }
 ubigint::ubigint(unsigned long value){
     // DEBUGF('~', this << " -> " << uvalue)
-    //uvalue = new vector<uint8_t>;
     int mod_val = 10;
     int ctr = 0;
     while (value != 0) {
@@ -28,15 +27,12 @@ ubigint::ubigint(unsigned long value){
 }
 
 ubigint::ubigint(const string& that){
-    // DEBUGF('~', "that = \"" << that << "\"");
-    //uvalue = new vector<uint8_t>;
-    int count = 0;
+     DEBUGF('~', "that = \"" << that << "\"");
     for (char digit : that) {
         if (not isdigit(digit)) {
             throw invalid_argument("ubigint::ubigint(" + that + ")");
         }
-        uvalue[count] = digit;
-        count++;
+        uvalue.push_back(digit - '0');
     }
 }
 
@@ -49,13 +45,14 @@ ubigint::ubigint(const string& that){
 
 //CONTINUE IF ADD DIGIT ISNT 0 OR THAT VALUE.SIZE IS LESS THAN CTR
 
+//FOR ALL ctr AND ctr2 VARIABLES IN LOOP CONDITIONALS: casted to type 'unsigned' to remove warning on compile, has no effect on code
 ubigint ubigint::operator+ (const ubigint& that) const {
     //DEBUGF('u', *this << "+" << that);
     //ubigint ret_big = new ubigint();
     ubigint ret_big;
     int add_digit = 0;
     int ctr = 0;
-    while (add_digit !=0 || that.uvalue.size() > ctr) {
+    while (add_digit !=0 || that.uvalue.size() > static_cast<unsigned>(ctr)) {
         int result = add_digit + that.uvalue[ctr] + uvalue[ctr];
         ret_big.uvalue[ctr] = result % 10;
         add_digit = result / 10;
@@ -80,7 +77,7 @@ ubigint ubigint::operator- (const ubigint& that) const {
     //ubigint one_big = 1;
     int ctr = 0;
     int sub_num = 0;
-    while (sub_num != 0 || that.uvalue.size() > ctr) {
+    while (sub_num != 0 || that.uvalue.size() > static_cast<unsigned>(ctr)) {
         int result = uvalue[ctr] - that.uvalue[ctr]-sub_num;
         if (result < 0) {
             sub_num = 1;
@@ -115,9 +112,9 @@ ubigint ubigint::operator* (const ubigint& that) const {
     ubigint temp_big;
     int carry_digit = 0;
     int ctr = 0;
-    while (that.uvalue.size() > ctr) {
+    while (that.uvalue.size() > static_cast<unsigned>(ctr)) {
         int ctr2 = 0;
-        while (carry_digit != 0 || uvalue.size() > ctr2) {
+        while (carry_digit != 0 || uvalue.size() > static_cast<unsigned>(ctr2)) {
             int result = carry_digit + (that.uvalue[ctr2] * uvalue[ctr]);
             temp_big.uvalue[ctr+ctr2] = result % 10;
             carry_digit = result / 10;
@@ -131,11 +128,8 @@ ubigint ubigint::operator* (const ubigint& that) const {
 }
 
 void ubigint::multiply_by_2() {
-    //making new ubigint with just 2 in it
-
-
-    //const ubigint ret_big = new ubigint("2");
-    //this = this*ret_big;
+    ubigint two = 2;
+    *this = *this * two;
 }
 
 
@@ -145,7 +139,7 @@ void ubigint::multiply_by_2() {
 //THEN DIVIDE THE VALUE BY 2
 void ubigint::divide_by_2() {
     int ctr = 0;
-    while (uvalue.size() > ctr) {
+    while (uvalue.size() > static_cast<unsigned>(ctr)) {
         if (uvalue[ctr] % 2 == 1 && ctr != 0) {
             uvalue[ctr - 1] += 5;
         }
@@ -189,13 +183,60 @@ ubigint ubigint::operator% (const ubigint& that) const {
 }
 
 bool ubigint::operator== (const ubigint& that) const {
-    return uvalue == that.uvalue;
+    if (this->uvalue.size() < that.uvalue.size() || this->uvalue.size() > that.uvalue.size()) 
+    {
+        return false;
+    }
+
+    int count = 0;
+    while (static_cast<unsigned>(count) < this->uvalue.size())
+    {
+        if (this->uvalue[count] > that.uvalue[count] || this->uvalue[count] < that.uvalue[count])
+        {
+            return false;
+        }
+        count++;
+    }
+    return true;
 }
 
 bool ubigint::operator< (const ubigint& that) const {
-    return uvalue < that.uvalue;
+    if (this->uvalue.size() < that.uvalue.size())
+    {
+        return true;
+    }
+    if (this->uvalue.size() > that.uvalue.size())
+    {
+        return false;
+    }
+    int count = 0;
+    while (static_cast<unsigned>(count) < this->uvalue.size())
+    {
+        if (this->uvalue[count] < that.uvalue[count])
+        {
+            return true;
+        }
+        if (this->uvalue[count] > that.uvalue[count])
+        {
+            return false;
+        }
+        count++;
+    }
+    return false;
 }
 
-//ostream& operator<< (ostream& out, const ubigint& that) {
-//    return out << "ubigint(" << that.uvalue << ")";
-//}
+void ubigint::makeString() {
+    int count = 0;
+    string returnString;
+    while (static_cast<unsigned>(count) < this->uvalue.size())
+    {
+        returnString = returnString + to_string(this->uvalue[count]);
+        count++;
+    }
+    this->uvalueString = returnString;
+}
+ostream& operator<< (ostream& out, ubigint& that) {
+    that.makeString();
+    string returnString = that.uvalueString;
+    return out << "ubigint(" << returnString << ")";
+}

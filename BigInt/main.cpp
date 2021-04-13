@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
                 }
             }
             catch (ydc_error& error) {
-                //cout << exec::execname() << ": " << error.what() << endl;
+                cout << exec::execname() << ": " << error.what() << endl;
             }
         }
     }

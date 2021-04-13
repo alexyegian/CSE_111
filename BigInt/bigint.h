@@ -14,7 +14,7 @@ using namespace std;
 #include "ubigint.h"
 
 class bigint {
-   // friend ostream& operator<< (ostream&, const bigint&);
+    friend ostream& operator<< (ostream&, const bigint&);
 private:
     ubigint uvalue;
     bool is_negative{ false };
@@ -24,7 +24,10 @@ public:
     bigint(long);
     bigint(const ubigint&, bool is_negative = false);
     explicit bigint(const string&);
-
+    string uvalueString;
+    void makeString();
+    bool returnIs_negative();
+    
     bigint operator+() const;
     bigint operator-() const;
 
