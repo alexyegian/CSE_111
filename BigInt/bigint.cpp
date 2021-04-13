@@ -69,11 +69,38 @@ bool bigint::operator== (const bigint& that) const {
 bool bigint::operator< (const bigint& that) const {
     string thisString = this->uvalue.makeString();
     string thatString = that.uvalue.makeString();
+    cout << "LESS THAN OPERATOR: " << thisString << " " << thatString << ": ";
 
-    if (thisString < thatString)
+    if (thisString.size() < thatString.size())
     {
+        cout << "TRUE" << endl;
         return true;
     }
+    if (thisString.size() > thatString.size())
+    {
+        cout << "FALSE" << endl;
+        return false;
+    }
+    unsigned long count = 0;
+    while (count < thisString.size())
+    {
+        char thisChar = thisString[count];
+        char thatChar = thatString[count];
+        int thisInt = thisChar - '0';
+        int thatInt = thatChar - '0';
+        if (thisInt < thatInt)
+        {
+            cout << "TRUE" << endl;
+            return true;
+        }
+        if (thisInt > thatInt)
+        {
+            cout << "FALSE" << endl;
+            return false;
+        }
+        count++;
+    }
+    cout << "FALSE" << endl;
     return false;
 }
 string bigint::makeString() const {

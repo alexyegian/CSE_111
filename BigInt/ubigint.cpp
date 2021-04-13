@@ -313,8 +313,8 @@ bool ubigint::operator< (const ubigint& that) const {
     unsigned long count = 0;
     while (count < thisString.size())
     {
-        char thisChar = thisString[thisString.size() - 1 - count];
-        char thatChar = thatString[thatString.size() - 1 - count];
+        char thisChar = thisString[count];
+        char thatChar = thatString[count];
         int thisInt = thisChar - '0';
         int thatInt = thatChar - '0';
         if (thisInt < thatInt)
