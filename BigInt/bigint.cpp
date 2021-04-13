@@ -30,24 +30,120 @@ bigint bigint::operator- () const {
 }
 
 bigint bigint::operator+ (const bigint& that) const {
-    ubigint result = uvalue + that.uvalue;
-    return result;
+    const bool thisNegative = this->returnIs_negative();
+    const bool thatNegative = that.is_negative;
+    const bigint thisCopy = bigint(this->uvalue, this->is_negative);
+    if (thisNegative == true && thatNegative == true)
+    {
+        ubigint result = uvalue + that.uvalue;
+        bigint returnBigint = bigint(result, true);
+        return result;
+    }
+    if (thisNegative == false && thatNegative == false)
+    {
+        ubigint result = uvalue + that.uvalue;
+        return result;
+    }
+    if (thisNegative == true && thatNegative == false)
+    {
+        const bigint thisCopy1 = bigint(thisCopy.uvalue, false);
+        if (that < thisCopy1)
+        {
+            ubigint result = uvalue - that.uvalue;
+            bigint returnBigint = bigint(result, true);
+            return result;
+        }
+        else
+        {
+            ubigint result = that.uvalue - uvalue;
+            bigint returnBigint = bigint(result, false);
+            return result;
+        }
+    }
+    if (thisNegative == false && thatNegative == true)
+    {
+        const bigint thatCopy = bigint(that.uvalue, false);
+        if (thisCopy < thatCopy)
+        {
+            ubigint result = that.uvalue - uvalue;
+            bigint returnBigint = bigint(result, true);
+            return result;
+        }
+        else
+        {
+            ubigint result = uvalue - that.uvalue;
+            bigint returnBigint = bigint(result, false);
+            return result;
+        }
+    }
 }
 
 bigint bigint::operator- (const bigint& that) const {
-    ubigint result = uvalue - that.uvalue;
-    return result;
+    const bool thisNegative = this->is_negative;
+    const bool thatNegative = that.is_negative;
+    const bigint thisCopy = bigint(this->uvalue, this->is_negative);
+    if (thisNegative == true && thatNegative == true)
+    {
+        if (thisCopy < that)
+        {
+            ubigint result = uvalue - that.uvalue;
+            bigint returnBigint = bigint(result, true);
+            return result;
+        }
+        else
+        {
+            ubigint result = that.uvalue - uvalue;
+            bigint returnBigint = bigint(result, false);
+            return result;
+        }
+    }
+    if (thisNegative == false && thatNegative == false)
+    {
+        if (thisCopy < that)
+        {
+            ubigint result = that.uvalue - uvalue;
+            bigint returnBigint = bigint(result, true);
+            return result;
+        }
+        else
+        {
+            ubigint result = uvalue - that.uvalue;
+            bigint returnBigint = bigint(result, false);
+            return result;
+        }
+    }
+    if (thisNegative == false && thatNegative == true)
+    {
+        ubigint result = uvalue + that.uvalue;
+        return result;
+    }
+    if (thisNegative == true && thatNegative == false)
+    {
+        ubigint result = uvalue + that.uvalue;
+        bigint returnBigint = bigint(result, true);
+        return returnBigint;
+    }
 }
 
 
 bigint bigint::operator* (const bigint& that) const {
     bigint result = uvalue * that.uvalue;
-    return result;
+    const bool thisNegative = this->is_negative;
+    const bool thatNegative = that.is_negative;
+    if (thisNegative == true && thatNegative == true) return result;
+    if (thisNegative == false && thatNegative == false) return result;
+    bigint returnBigint = bigint(result.uvalue, true);
+    return returnBigint;
 }
 
 bigint bigint::operator/ (const bigint& that) const {
     bigint result = uvalue / that.uvalue;
-    return result;
+    const bool thisNegative = this->is_negative;
+    const bool thatNegative = that.is_negative;
+    if (thisNegative == true && thatNegative == true) return result;
+    if (thisNegative == false && thatNegative == false) return result;
+    bigint returnBigint = bigint(result.uvalue, true);
+    return returnBigint;
 }
 
 bigint bigint::operator% (const bigint& that) const {
@@ -69,17 +165,30 @@ bool bigint::operator== (const bigint& that) const {
 bool bigint::operator< (const bigint& that) const {
     string thisString = this->uvalue.makeString();
     string thatString = that.uvalue.makeString();
-    cout << "LESS THAN OPERATOR: " << thisString << " " << thatString << ": ";
+    const bool thisNegative = this->is_negative;
+    const bool thatNegative = that.is_negative;
+    cout << "BIGINT LESS THAN OPERATOR: " << thisString << " " << thatString << ": ";
+
+    if (thisNegative == true && thatNegative == false)
+    {
+        return true;
+    }
+    if (thisNegative == false && thatNegative == true)
+    {
+        return false;
+    }
 
     if (thisString.size() < thatString.size())
     {
         cout << "TRUE" << endl;
-        return true;
+        if (thisNegative == true) return true;
+        else return false;
     }
     if (thisString.size() > thatString.size())
     {
         cout << "FALSE" << endl;
-        return false;
+        if (thisNegative == true) return false;
+        else return true;
     }
     unsigned long count = 0;
     while (count < thisString.size())
@@ -91,12 +200,14 @@ bool bigint::operator< (const bigint& that) const {
         if (thisInt < thatInt)
         {
             cout << "TRUE" << endl;
-            return true;
+            if (thisNegative == true) return true;
+            else return false;
         }
         if (thisInt > thatInt)
         {
             cout << "FALSE" << endl;
-            return false;
+            if (thisNegative == true) return false;
+            else return true;
         }
         count++;
     }
