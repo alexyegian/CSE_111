@@ -24,10 +24,9 @@ public:
     bigint(long);
     bigint(const ubigint&, bool is_negative = false);
     explicit bigint(const string&);
-    string uvalueString;
-    void makeString();
-    bool returnIs_negative();
-    
+    string makeString() const;
+    bool returnIs_negative() const;
+
     bigint operator+() const;
     bigint operator-() const;
 

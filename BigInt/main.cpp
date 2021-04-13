@@ -58,25 +58,25 @@ void do_clear(bigint_stack& stack, const char) {
 }
 
 
-//void do_dup(bigint_stack& stack, const char) {
-//    if (stack.size() < 1) throw ydc_error("stack empty");
-//    bigint top = stack.top();
-//    //DEBUGF('d', top);
-//    stack.push(top);
-//}
-//
-//void do_printall(bigint_stack& stack, const char) {
-//    for (const auto& elem : stack) cout << elem << endl;
-//}
-//
-//void do_print(bigint_stack& stack, const char) {
-//    if (stack.size() < 1) throw ydc_error("stack empty");
-//    cout << stack.top() << endl;
-//}
-//
-//void do_debug(bigint_stack&, const char) {
-//    cout << "Y not implemented" << endl;
-//}
+void do_dup(bigint_stack& stack, const char) {
+    if (stack.size() < 1) throw ydc_error("stack empty");
+    bigint top = stack.top();
+    //DEBUGF('d', top);
+    stack.push(top);
+}
+
+void do_printall(bigint_stack& stack, const char) {
+    for (const auto& elem : stack) cout << elem << endl;
+}
+
+void do_print(bigint_stack& stack, const char) {
+   if (stack.size() < 1) throw ydc_error("stack empty");
+    cout << stack.top() << endl;
+}
+
+void do_debug(bigint_stack&, const char) {
+    cout << "Y not implemented" << endl;
+}
 
 class ydc_quit : public exception {};
 void do_quit(bigint_stack&, const char) {
@@ -100,11 +100,11 @@ void do_function(bigint_stack& stack, const char oper) {
     case '/': do_arith(stack, oper); break;
     case '%': do_arith(stack, oper); break;
     case '^': do_arith(stack, oper); break;
-    //case 'Y': do_debug(stack, oper); break;
+    case 'Y': do_debug(stack, oper); break;
     case 'c': do_clear(stack, oper); break;
-    //case 'd': do_dup(stack, oper); break;
-    //case 'f': do_printall(stack, oper); break;
-    //case 'p': do_print(stack, oper); break;
+    case 'd': do_dup(stack, oper); break;
+    case 'f': do_printall(stack, oper); break;
+    case 'p': do_print(stack, oper); break;
     case 'q': do_quit(stack, oper); break;
     default: throw ydc_error(unimplemented(oper));
     }
@@ -139,53 +139,42 @@ void scan_options(int argc, char** argv) {
 //
 // Main function.
 //
+
+//POSSIBLE PROBLEMS WITH DIVIDE BY 2, PROBLEM IS THIS, VECTOR 100, SIZE 3, DIVIDE BY 2 GIVES VECTOR 050, MAY BE ISSUE BECAUSE PROBABLY SHOULD BE VECTOR 50, SIZE 2.
 int main(int argc, char** argv) {
-    printf("PART 1 %d, %p\n", argc, static_cast<void*>(argv));
     ubigint x = 5;
-    printf("PART 2");
     ubigint c = 412;
-    printf("PART 3\n\n");
-    string str = "";
-    str.append("6");
-    str.append("5");
-    str.append("4");
-    printf("MAKING STRING: %s\n", str.c_str());
-    ubigint d = str;
-    ubigint f = d + c;
-    printf("PART 4");
-    //exec::execname(argv[0]);
-    //printf("PART 5");
-    //scan_options(argc, argv);
-    //printf("PART 6");
-    //bigint_stack operand_stack;
-    //scanner input;
-    //try {
-    //    for (;;) {
-    //        try {
-    //            token lexeme = input.scan();
-    //            switch (lexeme.symbol) {
-    //            case tsymbol::SCANEOF:
-    //                throw ydc_quit();
-    //                break;
-    //            case tsymbol::NUMBER:
-    //                operand_stack.push(bigint(lexeme.lexinfo));
-    //                break;
-    //            case tsymbol::OPERATOR: {
-    //                char oper = lexeme.lexinfo[0];
-    //                do_function(operand_stack, oper);
-    //                break;
-    //            }
-    //            default:
-    //                assert(false);
-    //            }
-    //        }
-    //        catch (ydc_error& error) {
-    //            cout << exec::execname() << ": " << error.what() << endl;
-    //        }
-    //    }
-    //}
-    //catch (ydc_quit&) {
-    //    // Intentionally left empty.
-    //}
-    //return exec::status();
+    exec::execname(argv[0]);
+    scan_options(argc, argv);
+    bigint_stack operand_stack;
+    scanner input;
+    try {
+        for (;;) {
+            try {
+                token lexeme = input.scan();
+                switch (lexeme.symbol) {
+                case tsymbol::SCANEOF:
+                    throw ydc_quit();
+                    break;
+                case tsymbol::NUMBER:
+                    operand_stack.push(bigint(lexeme.lexinfo));
+                    break;
+                case tsymbol::OPERATOR: {
+                   char oper = lexeme.lexinfo[0];
+                    do_function(operand_stack, oper);
+                    break;
+                }
+                default:
+                    assert(false);
+                }
+            }
+            catch (ydc_error& error) {
+                cout << exec::execname() << ": " << error.what() << endl;
+            }
+        }
+    }
+    catch (ydc_quit&) {
+        // Intentionally left empty.
+    }
+    return exec::status();
 }

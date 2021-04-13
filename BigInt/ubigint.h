@@ -17,10 +17,9 @@ class ubigint {
 private:
     vector<uint8_t> uvalue;
 public:
-    string uvalueString;
     void multiply_by_2();
     void divide_by_2();
-    void makeString();
+    string makeString() const;
     ubigint();
     //ubigint() = default; // Need default ctor as well.
     ubigint(unsigned long);
