@@ -11,6 +11,7 @@ using namespace std;
 #include "scanner.h"
 #include "debug.h"
 
+//comment
 char scanner::get() {
     if (not good()) throw runtime_error("scanner::get() past EOF");
     char currchar = nextchar;

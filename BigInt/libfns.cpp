@@ -6,6 +6,7 @@
 // This algorithm would be more efficient with operators
 // *=, /=2, and is_odd.  But we leave it here.
 //
+//comment
 
 bigint pow(const bigint& base_arg, const bigint& exponent_arg) {
     bigint base(base_arg);

@@ -7,6 +7,8 @@
 using namespace std;
 //asdf
 #include "bigint.h"
+//comment
+
 
 bigint::bigint(long that) : uvalue(that), is_negative(that < 0) {
     //DEBUGF('~', this << " -> " << uvalue)
