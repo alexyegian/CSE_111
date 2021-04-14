@@ -35,6 +35,7 @@ bigint bigint::operator+ (const bigint& that) const {
     const bool thatNegative = that.is_negative;
     const bigint thisCopy = bigint(this->uvalue, this->is_negative);
     //printf("THIS NEGATIVE: %d THAT NEGATIVE: %d\n", thisNegative, thatNegative);
+    //good
     if (thisNegative == true && thatNegative == true)
     {
         ubigint result = uvalue + that.uvalue;
@@ -42,6 +43,7 @@ bigint bigint::operator+ (const bigint& that) const {
         //printf("RETURN BIG INT: NEGATIVE: %d VALUE: %s\n", returnBigint.is_negative, returnBigint.uvalue.makeString().c_str());
         return returnBigint;
     }
+    //good
     if (thisNegative == false && thatNegative == false)
     {
         ubigint result = uvalue + that.uvalue;
@@ -118,7 +120,7 @@ bigint bigint::operator- (const bigint& that) const {
         {
             //4 - 5, same as 5 - 4 = -(1)
             //ubigint result = that.uvalue - uvalue;
-            //printf("THIS LESS THAN THAT\n");
+            //printf("NO NEGS THIS LESS THAN THAT\n");
             ubigint result = that.uvalue - uvalue;
             bigint returnBigint = bigint(result, true);
             return returnBigint;
@@ -127,7 +129,8 @@ bigint bigint::operator- (const bigint& that) const {
         {
             //5-4, same as 5-4 = 1
             //ubigint result = uvalue - that.uvalue;
-            //printf("THIS MORE THAN THAT\n");
+            //printf("NO NEGS THIS MORE THAN THAT\n");
+            //printf("SUBTRACTING THIS FROM THAT NO NEGS\n");
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, false);
             return returnBigint;
@@ -205,20 +208,26 @@ bool bigint::operator< (const bigint& that) const {
 
     if (thisString.size() < thatString.size())
     {
-        if (thisNegative == true) return true;
-        else return false;
+        //printf("THIS LESS THAN NEG: %d\n", thisNegative);
+        //flipped again
+        //5(size 1) < 10 (size 2), this neg false, return false, meaning greater
+        if (thisNegative == true) return false;
+        else return true;
     }
     if (thisString.size() > thatString.size())
     {
-        if (thisNegative == true) return false;
-        else return true;
+        //printf("THIS LARGER THAN NEG: %d\n", thisNegative);
+        //Flipped again
+        //10 (size 2) > 5 (size 1), this neg false, return true, meaning less
+        if (thisNegative == true) return true;
+        else return false;
     }
     unsigned long count = 0;
     while (count < thisString.size())
     {
         char thisChar = thisString[count];
         char thatChar = thatString[count];
-       // printf("THIS CHAR: %c THAT CHAR: %c\n", thisChar, thatChar);
+        //printf("THIS CHAR: %c THAT CHAR: %c\n", thisChar, thatChar);
         int thisInt = thisChar - '0';
         int thatInt = thatChar - '0';
        // printf("THIS INT: %d THAT INT: %d\n", thisInt, thatInt);

@@ -103,6 +103,40 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 //-9
 //--
 // 1
+//ubigint ubigint::operator- (const ubigint& that) const {
+//    //printf("SUBTRACTING\n");
+//    //DEBUGF('u', *this << "-" << that);
+//    //ubigint ret_big = new ubigint();
+//    ubigint ret_big;
+//    //ubigint one_big = 1;
+//    int ctr = 0;
+//    int sub_num = 0;
+//    while (sub_num != 0 || that.uvalue.size() > static_cast<unsigned>(ctr)) {
+//        int result = uvalue[ctr] - that.uvalue[ctr]-sub_num;
+//        if (result < 0) {
+//            sub_num = 1;
+//            result += 10;
+//        }
+//        else {
+//            sub_num = 0;
+//        }
+//        //ret_big.uvalue[ctr] = result;
+//        ret_big.uvalue.push_back(result);
+//        ctr++;
+//    }
+//    for (int i = ret_big.uvalue.size() - 1; i > 0; i--) {
+//        if (ret_big.uvalue[i] == 0) {
+//            ret_big.uvalue.pop_back();
+//        }
+//        else {
+//            break;
+//        }
+//    }
+//    //DEBUGF('u', ret_big);
+//    return ret_big;
+//}
+
+
 ubigint ubigint::operator- (const ubigint& that) const {
     //printf("SUBTRACTING\n");
     //DEBUGF('u', *this << "-" << that);
@@ -111,8 +145,14 @@ ubigint ubigint::operator- (const ubigint& that) const {
     //ubigint one_big = 1;
     int ctr = 0;
     int sub_num = 0;
-    while (sub_num != 0 || that.uvalue.size() > static_cast<unsigned>(ctr)) {
-        int result = uvalue[ctr] - that.uvalue[ctr]-sub_num;
+    while (sub_num != 0 || that.uvalue.size() > static_cast<unsigned>(ctr) || uvalue.size() > static_cast<unsigned>(ctr)) {
+        int result = -1*sub_num;
+        if (uvalue.size() > static_cast<unsigned>(ctr)) {
+            result += uvalue[ctr];
+        }
+        if (that.uvalue.size() > static_cast<unsigned>(ctr)) {
+            result -= that.uvalue[ctr];
+        }
         if (result < 0) {
             sub_num = 1;
             result += 10;
@@ -135,7 +175,6 @@ ubigint ubigint::operator- (const ubigint& that) const {
     //DEBUGF('u', ret_big);
     return ret_big;
 }
-
 //Do digit multiplied by digit, with a carry bit.Resultand carry bit are obtained the same way. 8 * 8 = 64, carry bit for previous was 3, 
 //result now is 64 + 3 = 67. new carry bit is 67 / 10 = 6, that digit is now 67 % 10 = 7.
 //This gives the result of one multiplication ie.the 3 in 12 * 13. Still need to add it with the others.Way to do this is to have 2 bigints,
