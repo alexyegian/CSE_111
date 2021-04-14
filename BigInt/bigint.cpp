@@ -85,41 +85,63 @@ bigint bigint::operator- (const bigint& that) const {
     const bool thisNegative = this->is_negative;
     const bool thatNegative = that.is_negative;
     const bigint thisCopy = bigint(this->uvalue, this->is_negative);
+    //-4 - -5 = 1, subtraction, -5 - -4 = -1, subtraction
+    //lesser in back
+    //THESE OKAY
+    //printf("SUBTRACTION: THIS NEG: %d THAT NEG: %d THIS UVAL: %s THAT UVAL: %s\n", thisNegative, thatNegative, thisCopy.uvalue.makeString().c_str(), that.uvalue.makeString().c_str());
     if (thisNegative == true && thatNegative == true)
     {
+        //add
         if (thisCopy < that)
         {
+            //-4 - -5 = 1, same as 5 - 4
+            //ubigint result = uvalue - that.uvalue;
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, true);
             return returnBigint;
         }
         else
         {
+            //-5 - -4 = -1, same as -(5-4)
             ubigint result = that.uvalue - uvalue;
+            //ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, false);
             return returnBigint;
         }
     }
+    //4 - 5 = -1, subtraction, 5 - 4, subtraction
+    //lesser in back
+    //THESE NOT OKAY
     if (thisNegative == false && thatNegative == false)
     {
         if (thisCopy < that)
         {
+            //4 - 5, same as 5 - 4 = -(1)
+            //ubigint result = that.uvalue - uvalue;
+            //printf("THIS LESS THAN THAT\n");
             ubigint result = that.uvalue - uvalue;
             bigint returnBigint = bigint(result, true);
             return returnBigint;
         }
         else
         {
+            //5-4, same as 5-4 = 1
+            //ubigint result = uvalue - that.uvalue;
+            //printf("THIS MORE THAN THAT\n");
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, false);
             return returnBigint;
         }
     }
+    //5 - -4 = 9, addition 
+    //THESE OKAY
     if (thisNegative == false && thatNegative == true)
     {
         ubigint result = uvalue + that.uvalue;
         return result;
     }
+    //-5 - 4 = -9, subtraction
+    //THESE OKAY
     if (thisNegative == true && thatNegative == false)
     {
         ubigint result = uvalue + that.uvalue;
@@ -170,7 +192,8 @@ bool bigint::operator< (const bigint& that) const {
     string thatString = that.uvalue.makeString();
     const bool thisNegative = this->is_negative;
     const bool thatNegative = that.is_negative;
-
+   // printf("LESS THAN TESTING\n\n");
+   // printf("THIS NEG: %d THAT NEG: %d THIS: %s THAT: %s\n", thisNegative, thatNegative, thisString.c_str(), thatString.c_str());
     if (thisNegative == true && thatNegative == false)
     {
         return true;
@@ -195,17 +218,25 @@ bool bigint::operator< (const bigint& that) const {
     {
         char thisChar = thisString[count];
         char thatChar = thatString[count];
+       // printf("THIS CHAR: %c THAT CHAR: %c\n", thisChar, thatChar);
         int thisInt = thisChar - '0';
         int thatInt = thatChar - '0';
+       // printf("THIS INT: %d THAT INT: %d\n", thisInt, thatInt);
         if (thisInt < thatInt)
         {
-            if (thisNegative == true) return true;
-            else return false;
+        //    printf("THIS INT LESS IS TRUE THIS NEG: %d\n", thisNegative);
+            //I THINK THESE ARE FLIPPED
+            //this: 4 that: 5, this negative is false, return false, meaning more
+            if (thisNegative == true) return false;
+            else return true;
         }
         if (thisInt > thatInt)
         {
-            if (thisNegative == true) return false;
-            else return true;
+         //   printf("THIS INT MORE IS TRUE THIS NEG: %d\n", thisNegative);
+            //THINK THESE ARE FLIPPED
+            //this: 5, that 4, this negative is false, return true, meaning less.
+            if (thisNegative == true) return true;
+            else return false;
         }
         count++;
     }

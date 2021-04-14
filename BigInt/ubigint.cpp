@@ -104,6 +104,7 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 //--
 // 1
 ubigint ubigint::operator- (const ubigint& that) const {
+    //printf("SUBTRACTING\n");
     //DEBUGF('u', *this << "-" << that);
     //ubigint ret_big = new ubigint();
     ubigint ret_big;
@@ -333,6 +334,10 @@ string ubigint::makeString() const {
     {
         returnString = returnString + to_string(this->uvalue[this->uvalue.size() - 1 - count]);
         count++;
+        if (count % 69 == 0)
+        {
+            returnString = returnString + "\\" + "\n";
+        }
     }
     return returnString;
 }
