@@ -150,15 +150,18 @@ ubigint ubigint::operator* (const ubigint& that) const {
     //DEBUGF('u', *this << "+" << that);
     //ubigint ret_big = new ubigint();
     //ubigint temp_big = new ubigint();    
+    //printf("MULTIPLYING\n\n");
     ubigint ret_big;
-    ubigint temp_big;
     int carry_digit = 0;
     int ctr = 0;
     while (that.uvalue.size() > static_cast<unsigned>(ctr)) {
+        ubigint temp_big;
         int ctr2 = 0;
         for (int i = 0; i < ctr; i++) {
+            //printf("PUSHING BACK: CTR: %d I: %d IS LESS: %d\n", ctr, i, (i<ctr));
             temp_big.uvalue.push_back(0);
         }
+        //printf("TEMP BIG PART 1: %s\n", temp_big.makeString().c_str());
         while (carry_digit != 0 || uvalue.size() > static_cast<unsigned>(ctr2)) {
             int result = carry_digit;
             if (uvalue.size() > static_cast<unsigned>(ctr2)) {
@@ -166,13 +169,17 @@ ubigint ubigint::operator* (const ubigint& that) const {
             }
             temp_big.uvalue.push_back(result % 10);
             carry_digit = result / 10;
+            //printf("RESULT: %d PUSH BACK: %d CARRY DIGIT: %d\n", result, result % 10, result / 10);
+            //printf("TEMP BIG PART 2: %s\n", temp_big.makeString().c_str());
             ctr2++;
         }
+        //printf("TEMP BIG: %s\n", temp_big.makeString().c_str());
         ret_big = temp_big+ret_big;
-        temp_big = 0;
+        //printf("TEMP RET: %s\n", ret_big.makeString().c_str());
         ctr++;
     }
     //DEBUGF('u', ret_big);
+    //printf("ENDING VALUE: %s\n", ret_big.makeString().c_str());
     return ret_big;
 }
 
@@ -326,10 +333,6 @@ string ubigint::makeString() const {
     {
         returnString = returnString + to_string(this->uvalue[this->uvalue.size() - 1 - count]);
         count++;
-        if (count % 69 == 0)
-        {
-            returnString = returnString  + "\\" + "\n";
-        }
     }
     return returnString;
 }

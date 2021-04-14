@@ -29,15 +29,18 @@ bigint bigint::operator- () const {
     return { uvalue, not is_negative };
 }
 
+//-2, -2 +
 bigint bigint::operator+ (const bigint& that) const {
     const bool thisNegative = this->returnIs_negative();
     const bool thatNegative = that.is_negative;
     const bigint thisCopy = bigint(this->uvalue, this->is_negative);
+    //printf("THIS NEGATIVE: %d THAT NEGATIVE: %d\n", thisNegative, thatNegative);
     if (thisNegative == true && thatNegative == true)
     {
         ubigint result = uvalue + that.uvalue;
         bigint returnBigint = bigint(result, true);
-        return result;
+        //printf("RETURN BIG INT: NEGATIVE: %d VALUE: %s\n", returnBigint.is_negative, returnBigint.uvalue.makeString().c_str());
+        return returnBigint;
     }
     if (thisNegative == false && thatNegative == false)
     {
@@ -51,13 +54,13 @@ bigint bigint::operator+ (const bigint& that) const {
         {
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, true);
-            return result;
+            return returnBigint;
         }
         else
         {
             ubigint result = that.uvalue - uvalue;
             bigint returnBigint = bigint(result, false);
-            return result;
+            return returnBigint;
         }
     }
     if (thisNegative == false && thatNegative == true)
@@ -67,13 +70,13 @@ bigint bigint::operator+ (const bigint& that) const {
         {
             ubigint result = that.uvalue - uvalue;
             bigint returnBigint = bigint(result, true);
-            return result;
+            return returnBigint;
         }
         else
         {
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, false);
-            return result;
+            return returnBigint;
         }
     }
 }
@@ -88,13 +91,13 @@ bigint bigint::operator- (const bigint& that) const {
         {
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, true);
-            return result;
+            return returnBigint;
         }
         else
         {
             ubigint result = that.uvalue - uvalue;
             bigint returnBigint = bigint(result, false);
-            return result;
+            return returnBigint;
         }
     }
     if (thisNegative == false && thatNegative == false)
@@ -103,13 +106,13 @@ bigint bigint::operator- (const bigint& that) const {
         {
             ubigint result = that.uvalue - uvalue;
             bigint returnBigint = bigint(result, true);
-            return result;
+            return returnBigint;
         }
         else
         {
             ubigint result = uvalue - that.uvalue;
             bigint returnBigint = bigint(result, false);
-            return result;
+            return returnBigint;
         }
     }
     if (thisNegative == false && thatNegative == true)
@@ -216,6 +219,7 @@ bool bigint::returnIs_negative() const {
     return this->is_negative;
 }
 ostream& operator<< (ostream& out, const bigint& that) {
+    //printf("TRYING TO PRINT NEGATIVE: %d\n", that.is_negative);
     string returnString = that.makeString();
     if (that.returnIs_negative() == false) return out << returnString;
 
