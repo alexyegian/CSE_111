@@ -167,7 +167,6 @@ bool bigint::operator< (const bigint& that) const {
     string thatString = that.uvalue.makeString();
     const bool thisNegative = this->is_negative;
     const bool thatNegative = that.is_negative;
-    cout << "BIGINT LESS THAN OPERATOR: " << thisString << " " << thatString << ": ";
 
     if (thisNegative == true && thatNegative == false)
     {
@@ -180,13 +179,11 @@ bool bigint::operator< (const bigint& that) const {
 
     if (thisString.size() < thatString.size())
     {
-        cout << "TRUE" << endl;
         if (thisNegative == true) return true;
         else return false;
     }
     if (thisString.size() > thatString.size())
     {
-        cout << "FALSE" << endl;
         if (thisNegative == true) return false;
         else return true;
     }
@@ -199,19 +196,16 @@ bool bigint::operator< (const bigint& that) const {
         int thatInt = thatChar - '0';
         if (thisInt < thatInt)
         {
-            cout << "TRUE" << endl;
             if (thisNegative == true) return true;
             else return false;
         }
         if (thisInt > thatInt)
         {
-            cout << "FALSE" << endl;
             if (thisNegative == true) return false;
             else return true;
         }
         count++;
     }
-    cout << "FALSE" << endl;
     return false;
 }
 string bigint::makeString() const {
@@ -223,6 +217,8 @@ bool bigint::returnIs_negative() const {
 }
 ostream& operator<< (ostream& out, const bigint& that) {
     string returnString = that.makeString();
-    return out << "bigint(" << (that.returnIs_negative() ? "-" : "+")
-        << "," << returnString << ")";
+    if (that.returnIs_negative() == false) return out << returnString;
+
+    return out << (that.returnIs_negative() ? "-" : "+")
+        << returnString;
 }

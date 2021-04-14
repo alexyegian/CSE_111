@@ -125,7 +125,6 @@ ubigint ubigint::operator- (const ubigint& that) const {
     }
     for (int i = ret_big.uvalue.size() - 1; i > 0; i--) {
         if (ret_big.uvalue[i] == 0) {
-            printf("SUBTRACTING POPPING\n");
             ret_big.uvalue.pop_back();
         }
         else {
@@ -161,7 +160,10 @@ ubigint ubigint::operator* (const ubigint& that) const {
             temp_big.uvalue.push_back(0);
         }
         while (carry_digit != 0 || uvalue.size() > static_cast<unsigned>(ctr2)) {
-            int result = carry_digit + (that.uvalue[ctr] * uvalue[ctr2]);
+            int result = carry_digit;
+            if (uvalue.size() > static_cast<unsigned>(ctr2)) {
+                result += (that.uvalue[ctr] * uvalue[ctr2]);
+            }
             temp_big.uvalue.push_back(result % 10);
             carry_digit = result / 10;
             ctr2++;
@@ -252,18 +254,11 @@ quo_rem udivide(const ubigint& dividend, const ubigint& divisor_) {
         //2
         //4
     }
-    printf("MIDPOINT\n\n");
     //divisor: 20, power of 2: 4. remainder: 20
     while (power_of_2 > zero) {
-        printf("DIVISOR: %s\n", divisor.makeString().c_str());
-        printf("REMAINDER: %s\n", remainder.makeString().c_str());
-        printf("POWER OF 2: %s\n", power_of_2.makeString().c_str());
         if (divisor < remainder || divisor == remainder) {
-            printf("GO HERE\n");
             remainder = remainder - divisor;
             quotient = quotient + power_of_2;
-            printf("QUO: %s\n", quotient.makeString().c_str());
-            printf("REM: %s\n", remainder.makeString().c_str());
         }
         divisor.divide_by_2();
         power_of_2.divide_by_2();
@@ -284,30 +279,24 @@ ubigint ubigint::operator% (const ubigint& that) const {
 bool ubigint::operator== (const ubigint& that) const {
     string thisString = this->makeString();
     string thatString = that.makeString();
-    cout << "EQUAL OPERATOR: " << thisString << " " << thatString << ": ";
 
     if (thisString == thatString)
     {
-        cout << "TRUE" << endl;
         return true;
     }
-    cout << "FALSE" << endl;
     return false;
 }
 
 bool ubigint::operator< (const ubigint& that) const {
     string thisString = this->makeString();
     string thatString = that.makeString();
-    cout << "LESS THAN OPERATOR: " << thisString << " " << thatString << ": ";
     
     if(thisString.size() < thatString.size())
     {
-        cout << "TRUE" << endl;
         return true;
     }
     if (thisString.size() > thatString.size())
     {
-        cout << "FALSE" << endl;
         return false;
     }
     unsigned long count = 0;
@@ -319,17 +308,14 @@ bool ubigint::operator< (const ubigint& that) const {
         int thatInt = thatChar - '0';
         if (thisInt < thatInt)
         {
-            cout << "TRUE" << endl;
             return true;
         }
         if (thisInt > thatInt)
         {
-            cout << "FALSE" << endl;
             return false;
         }
         count++;
     }
-    cout << "FALSE" << endl;
     return false;
 }
 
@@ -345,5 +331,5 @@ string ubigint::makeString() const {
 }
 ostream& operator<< (ostream& out, const ubigint& that) {
     string holdString = that.makeString();
-    return out << "ubigint(" << holdString << ")";
+    return out << holdString;
 }

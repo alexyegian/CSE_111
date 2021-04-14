@@ -125,14 +125,14 @@ void scan_options(int argc, char** argv) {
             //debugflags::setflags(optarg);
             break;
         default:
-           // error() << "-" << static_cast<char> (optopt)
-           //     << ": invalid option" << endl;
+         //   error() << "-" << static_cast<char> (optopt)
+         //       << ": invalid option" << endl;
            break;
         }
     }
-    if (optind < argc) {
-        //error() << "operand not permitted" << endl;
-    }
+   // if (optind < argc) {
+       // error() << "operand not permitted" << endl;
+    //}
 }
 
 
@@ -142,11 +142,6 @@ void scan_options(int argc, char** argv) {
 
 //POSSIBLE PROBLEMS WITH DIVIDE BY 2, PROBLEM IS THIS, VECTOR 100, SIZE 3, DIVIDE BY 2 GIVES VECTOR 050, MAY BE ISSUE BECAUSE PROBABLY SHOULD BE VECTOR 50, SIZE 2.
 int main(int argc, char** argv) {
-    printf("TESTING: %d %p\n", argc, static_cast<void*>(argv));
-    ubigint x = 3;
-    ubigint c = 20;
-    ubigint f = c / x;
-    //cout << f << endl;
     exec::execname(argv[0]);
     scan_options(argc, argv);
     bigint_stack operand_stack;

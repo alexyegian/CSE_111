@@ -20,7 +20,7 @@ bigint pow(const bigint& base_arg, const bigint& exponent_arg) {
         base = ONE / base;
         exponent = -exponent;
     }
-    while (exponent > ZERO) {
+    while (ZERO < exponent) {
         if (exponent % TWO == ONE) {
             result = result * base;
             exponent = exponent - 1;

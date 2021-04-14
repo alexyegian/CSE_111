@@ -29,21 +29,21 @@ token scanner::scan() {
     return { tsymbol::OPERATOR, {get()} };
 }
 
-//ostream& operator<< (ostream& out, tsymbol symbol) {
-//    struct hasher {
-//        auto operator() (tsymbol sym) const {
-//            return static_cast<underlying_type<tsymbol>::type> (sym);
-//        }
-//    };
-//    static const unordered_map<tsymbol, string, hasher> map{
-//       {tsymbol::NUMBER  , "NUMBER"  },
-//       {tsymbol::OPERATOR, "OPERATOR"},
-//       {tsymbol::SCANEOF , "SCANEOF" },
-//    };
-//    return out << map.at(symbol);
-//}
-//
-//ostream& operator<< (ostream& out, const token& token) {
-//    out << "{" << token.symbol << ", \"" << token.lexinfo << "\"}";
-//    return out;
-//}
+ostream& operator<< (ostream& out, tsymbol symbol) {
+    struct hasher {
+        auto operator() (tsymbol sym) const {
+            return static_cast<underlying_type<tsymbol>::type> (sym);
+        }
+    };
+    static const unordered_map<tsymbol, string, hasher> map{
+       {tsymbol::NUMBER  , "NUMBER"  },
+       {tsymbol::OPERATOR, "OPERATOR"},
+       {tsymbol::SCANEOF , "SCANEOF" },
+    };
+    return out << map.at(symbol);
+}
+
+ostream& operator<< (ostream& out, const token& token) {
+    out << "{" << token.symbol << ", \"" << token.lexinfo << "\"}";
+    return out;
+}
