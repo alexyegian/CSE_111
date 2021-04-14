@@ -138,7 +138,7 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 
 
 ubigint ubigint::operator- (const ubigint& that) const {
-    //printf("SUBTRACTING\n");
+    printf("SUBTRACTING\n");
     //DEBUGF('u', *this << "-" << that);
     //ubigint ret_big = new ubigint();
     ubigint ret_big;
