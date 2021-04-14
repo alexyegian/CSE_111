@@ -17,6 +17,7 @@
 using namespace std;
 
 #include "debug.h"
+//comment
 
 //
 // ydc_error -

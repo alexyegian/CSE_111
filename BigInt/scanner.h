@@ -8,6 +8,7 @@
 using namespace std;
 
 #include "debug.h"
+//comment
 
 enum class tsymbol { SCANEOF, NUMBER, OPERATOR };
 

@@ -7,6 +7,7 @@
 // as fundamental comparisons for type T, define the other
 // six operators in terms of the basic ones.
 //
+//comment
 
 #ifndef __REL_OPS_H__
 #define __REL_OPS_H__

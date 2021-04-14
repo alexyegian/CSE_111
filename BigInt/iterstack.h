@@ -17,6 +17,7 @@
 // Any underlying container which supports the necessary operations
 // could be used, such as vector, list, or deque.
 // 
+//comment
 
 #ifndef __ITERSTACK_H__
 #define __ITERSTACK_H__

@@ -3,6 +3,7 @@
 // Library functions not members of any class.
 
 #include "bigint.h"
+//comment
 
 bigint pow(const bigint& base, const bigint& exponent);
 #pragma once
