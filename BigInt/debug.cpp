@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: debug.cpp,v 1.2 2021-03-31 19:46:57-07 - - $
 
 #include <climits>
@@ -33,7 +35,7 @@ void debugflags::where(char flag, const char* file, int line,
     printf("%c%s%d%s\n", flag, file, line, pretty_function);
 
 
-    //cerr << exec::execname() << ": DEBUG(" << flag << ") "
-    //    << file << "[" << line << "] " << endl
-    //    << "   " << pretty_function << endl;
+    cerr << exec::execname() << ": DEBUG(" << flag << ") "
+        << file << "[" << line << "] " << endl
+        << "   " << pretty_function << endl;
 }

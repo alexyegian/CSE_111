@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: ubigint.cpp,v 1.12 2020-10-19 13:14:59-07 - - $
 
 #include <cctype>

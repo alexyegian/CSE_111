@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: main.cpp,v 1.3 2021-03-26 15:29:03-07 - - $
 
 #include <cassert>
@@ -34,10 +36,10 @@ void do_arith(bigint_stack& stack, const char oper) {
     if (stack.size() < 2) throw ydc_error("stack empty");
     bigint right = stack.top();
     stack.pop();
-    //DEBUGF('d', "right = " << right);
+    DEBUGF('d', "right = " << right);
     bigint left = stack.top();
     stack.pop();
-    //DEBUGF('d', "left = " << left);
+    DEBUGF('d', "left = " << left);
     bigint result;
     switch (oper) {
     case '+': result = left + right; break;
@@ -48,12 +50,12 @@ void do_arith(bigint_stack& stack, const char oper) {
     case '^': result = pow(left, right); break;
     default: throw invalid_argument("do_arith operator "s + oper);
     }
-    //DEBUGF('d', "result = " << result);
+    DEBUGF('d', "result = " << result);
     stack.push(result);
 }
 
 void do_clear(bigint_stack& stack, const char) {
-    //DEBUGF('d', "");
+    DEBUGF('d', "");
     stack.clear();
 }
 
@@ -61,7 +63,7 @@ void do_clear(bigint_stack& stack, const char) {
 void do_dup(bigint_stack& stack, const char) {
     if (stack.size() < 1) throw ydc_error("stack empty");
     bigint top = stack.top();
-    //DEBUGF('d', top);
+    DEBUGF('d', top);
     stack.push(top);
 }
 
@@ -122,7 +124,7 @@ void scan_options(int argc, char** argv) {
         if (option == EOF) break;
         switch (option) {
         case '@':
-            //debugflags::setflags(optarg);
+            debugflags::setflags(optarg);
             break;
         default:
          //   error() << "-" << static_cast<char> (optopt)

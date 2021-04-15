@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: ubigint.h,v 1.5 2020-10-11 12:25:22-07 - - $
 
 #ifndef __UBIGINT_H__

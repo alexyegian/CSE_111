@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: bigint.cpp,v 1.3 2020-10-11 12:47:51-07 - - $
 
 #include <cstdlib>

@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: util.cpp,v 1.2 2019-12-12 19:22:40-08 - - $
 
 #include <cstring>
@@ -13,7 +15,7 @@ void exec::execname(const string& argv0) {
 	execname_ = basename(argv0.c_str());
 	cout << boolalpha;
 	cerr << boolalpha;
-	//DEBUGF('Y', "execname = " << execname_);
+	DEBUGF('Y', "execname = " << execname_);
 }
 
 void exec::status(int new_status) {

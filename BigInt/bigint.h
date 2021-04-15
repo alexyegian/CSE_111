@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: bigint.h,v 1.2 2020-01-06 13:39:55-08 - - $
 
 #ifndef __BIGINT_H__
