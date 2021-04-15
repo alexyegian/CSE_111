@@ -24,7 +24,6 @@ public:
     void divide_by_2();
     string makeString() const;
     ubigint();
-    //ubigint() = default; // Need default ctor as well.
     ubigint(unsigned long);
     ubigint(const string&);
 

@@ -74,8 +74,8 @@ public:
 //       complain() << filename << ": some problem" << endl;
 //
 
-//ostream& note();
-//ostream& error();
+ostream& note();
+ostream& error();
 
 #endif
 #pragma once

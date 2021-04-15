@@ -127,14 +127,14 @@ void scan_options(int argc, char** argv) {
             debugflags::setflags(optarg);
             break;
         default:
-         //   error() << "-" << static_cast<char> (optopt)
-         //       << ": invalid option" << endl;
+            error() << "-" << static_cast<char> (optopt)
+                << ": invalid option" << endl;
            break;
         }
     }
-   // if (optind < argc) {
-       // error() << "operand not permitted" << endl;
-    //}
+    if (optind < argc) {
+        error() << "operand not permitted" << endl;
+    }
 }
 
 

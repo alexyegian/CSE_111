@@ -19,7 +19,6 @@ using namespace std;
 ubigint::ubigint() {
 }
 ubigint::ubigint(unsigned long value){
-    // DEBUGF('~', this << " -> " << uvalue)
     int ctr = 0;
     while (value != 0 || ctr == 0) {
         uvalue.push_back(value % 10);
@@ -31,7 +30,6 @@ ubigint::ubigint(unsigned long value){
 
 
 ubigint::ubigint(const string& that) {
-    DEBUGF('~', "that = "" << that << """);
     int count = 0;
     while (static_cast<unsigned>(count) < that.size()) {
         if (not isdigit(that[that.size() - count - 1])) {
@@ -53,8 +51,6 @@ ubigint::ubigint(const string& that) {
 
 //FOR ALL ctr AND ctr2 VARIABLES IN LOOP CONDITIONALS: casted to type 'unsigned' to remove warning on compile, has no effect on code
 ubigint ubigint::operator+ (const ubigint& that) const {
-    //DEBUGF('u', *this << "+" << that);
-    //ubigint ret_big = new ubigint();
     ubigint ret_big;
     int add_digit = 0;
     int ctr = 0;
@@ -70,7 +66,6 @@ ubigint ubigint::operator+ (const ubigint& that) const {
         add_digit = result / 10;
         ctr++;
     }
-    ////DEBUGF('u', ret_big);
     return ret_big;
 }
 
@@ -78,49 +73,10 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 //cycles through from least sig to most sig, and if that[ctr]>this[ctr], borrow ahead from this[ctr+1]
 //subtract 1 from this[ctr+1], and add 10 to result
 
-//10
-//-9
-//--
-// 1
-//ubigint ubigint::operator- (const ubigint& that) const {
-//    //printf("SUBTRACTING\n");
-//    //DEBUGF('u', *this << "-" << that);
-//    //ubigint ret_big = new ubigint();
-//    ubigint ret_big;
-//    //ubigint one_big = 1;
-//    int ctr = 0;
-//    int sub_num = 0;
-//    while (sub_num != 0 || that.uvalue.size() > static_cast<unsigned>(ctr)) {
-//        int result = uvalue[ctr] - that.uvalue[ctr]-sub_num;
-//        if (result < 0) {
-//            sub_num = 1;
-//            result += 10;
-//        }
-//        else {
-//            sub_num = 0;
-//        }
-//        //ret_big.uvalue[ctr] = result;
-//        ret_big.uvalue.push_back(result);
-//        ctr++;
-//    }
-//    for (int i = ret_big.uvalue.size() - 1; i > 0; i--) {
-//        if (ret_big.uvalue[i] == 0) {
-//            ret_big.uvalue.pop_back();
-//        }
-//        else {
-//            break;
-//        }
-//    }
-//    //DEBUGF('u', ret_big);
-//    return ret_big;
-//}
 
 
 ubigint ubigint::operator- (const ubigint& that) const {
-    //DEBUGF('u', *this << "-" << that);
-    //ubigint ret_big = new ubigint();
     ubigint ret_big;
-    //ubigint one_big = 1;
     int ctr = 0;
     int sub_num = 0;
     while (sub_num != 0 || that.uvalue.size() > static_cast<unsigned>(ctr) || uvalue.size() > static_cast<unsigned>(ctr)) {
@@ -138,7 +94,6 @@ ubigint ubigint::operator- (const ubigint& that) const {
         else {
             sub_num = 0;
         }
-        //ret_big.uvalue[ctr] = result;
         ret_big.uvalue.push_back(result);
         ctr++;
     }
@@ -150,7 +105,6 @@ ubigint ubigint::operator- (const ubigint& that) const {
             break;
         }
     }
-    //DEBUGF('u', ret_big);
     return ret_big;
 }
 //Do digit multiplied by digit, with a carry bit.Resultand carry bit are obtained the same way. 8 * 8 = 64, carry bit for previous was 3, 
@@ -165,10 +119,6 @@ ubigint ubigint::operator- (const ubigint& that) const {
 
 
 ubigint ubigint::operator* (const ubigint& that) const {
-    //DEBUGF('u', *this << "+" << that);
-    //ubigint ret_big = new ubigint();
-    //ubigint temp_big = new ubigint();    
-    //printf("MULTIPLYING\n\n");
     ubigint ret_big;
     int carry_digit = 0;
     int ctr = 0;
@@ -176,10 +126,8 @@ ubigint ubigint::operator* (const ubigint& that) const {
         ubigint temp_big;
         int ctr2 = 0;
         for (int i = 0; i < ctr; i++) {
-            //printf("PUSHING BACK: CTR: %d I: %d IS LESS: %d\n", ctr, i, (i<ctr));
             temp_big.uvalue.push_back(0);
         }
-        //printf("TEMP BIG PART 1: %s\n", temp_big.makeString().c_str());
         while (carry_digit != 0 || uvalue.size() > static_cast<unsigned>(ctr2)) {
             int result = carry_digit;
             if (uvalue.size() > static_cast<unsigned>(ctr2)) {
@@ -187,34 +135,23 @@ ubigint ubigint::operator* (const ubigint& that) const {
             }
             temp_big.uvalue.push_back(result % 10);
             carry_digit = result / 10;
-            //printf("RESULT: %d PUSH BACK: %d CARRY DIGIT: %d\n", result, result % 10, result / 10);
-            //printf("TEMP BIG PART 2: %s\n", temp_big.makeString().c_str());
             ctr2++;
         }
-        //printf("TEMP BIG: %s\n", temp_big.makeString().c_str());
         ret_big = temp_big+ret_big;
-        //printf("TEMP RET: %s\n", ret_big.makeString().c_str());
         ctr++;
     }
-    //DEBUGF('u', ret_big);
-    //printf("ENDING VALUE: %s\n", ret_big.makeString().c_str());
     return ret_big;
 }
 
 void ubigint::multiply_by_2() {
-    //printf("\n\n\nMULTIPLYING BY 2\n\n");
-    //printf("START\n");
     int ctr = 0;
     while (uvalue.size() > static_cast<unsigned>(ctr)) {
-       // printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
         ctr++;
     }
     ubigint two = 2;
     *this = *this * two;
-   // printf("END\n");
     ctr = 0;
     while (uvalue.size() > static_cast<unsigned>(ctr)) {
-        //printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
         ctr++;
     }
 }
@@ -227,11 +164,8 @@ void ubigint::multiply_by_2() {
 
 //NEED TO POP ALL VALUES THAT ARE 0 FROM END, IE VECTOR 100 SIZE 3, DIVIDED BY 2 IS 050, SIZE 3, SHOULD BE 50, SIZE 2.
 void ubigint::divide_by_2() {
-    //printf("\n\n\nDIVIDING BY 2\n\n");
-    //printf("START\n");
     int ctr = 0;
     while (uvalue.size() > static_cast<unsigned>(ctr)) {
-        //printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
         ctr++;
     }
     ctr = 0;
@@ -252,9 +186,7 @@ void ubigint::divide_by_2() {
         }
     }
     ctr = 0;
-    //printf("\nEND\n");
     while (uvalue.size() > static_cast<unsigned>(ctr)) {
-        //printf("CTR: %d NUM: %d\n", ctr, uvalue[ctr]);
         ctr++;
     }
 }
@@ -264,22 +196,15 @@ struct quo_rem { ubigint quotient; ubigint remainder; };
 quo_rem udivide(const ubigint& dividend, const ubigint& divisor_) {
     // NOTE: udivide is a non-member function.
     ubigint divisor{ divisor_ };
-    //5
     ubigint zero{ 0 };
     if (divisor == zero) throw domain_error("udivide by zero");
     ubigint power_of_2{ 1 };
     ubigint quotient{ 0 };
     ubigint remainder{ dividend }; // left operand, dividend
-    //20
     while (divisor < remainder) {
         divisor.multiply_by_2();
-        //10
-        //20
         power_of_2.multiply_by_2();
-        //2
-        //4
     }
-    //divisor: 20, power of 2: 4. remainder: 20
     while (power_of_2 > zero) {
         if (divisor < remainder || divisor == remainder) {
             remainder = remainder - divisor;
@@ -288,8 +213,6 @@ quo_rem udivide(const ubigint& dividend, const ubigint& divisor_) {
         divisor.divide_by_2();
         power_of_2.divide_by_2();
     }
-    //DEBUGF('/', "quotient = " << quotient);
-    //DEBUGF('/', "remainder = " << remainder);
     return { .quotient = quotient, .remainder = remainder };
 }
 
