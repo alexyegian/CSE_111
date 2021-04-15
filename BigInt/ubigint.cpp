@@ -28,18 +28,6 @@ ubigint::ubigint(unsigned long value){
 }
 
 
-//ubigint::ubigint(const string& that) {
-//    DEBUGF('~', "that = "" << that << """);
-//    int count = 0;
-//    while (count < static_cast<int>(that.size())) {
-//        if (not isdigit(that[count])) {
-//            throw invalid_argument("ubigint::ubigint(" + that + ")");
-//        }
-//        uvalue.push_back(that[count] - '0');
-//        printf("VALUE AT: CTR: %d IS %d\n", count, uvalue[count]);
-//        count++;
-//    }
-//}
 ubigint::ubigint(const string& that) {
     DEBUGF('~', "that = "" << that << """);
     int count = 0;
@@ -51,19 +39,6 @@ ubigint::ubigint(const string& that) {
         count++;
     }
 }
-
-// ubigint::ubigint(const string& that){
-//     //DEBUGF('~', "that = \"" << that << "\"");
-//    int ctr = 0;
-//    for (char digit : that) {
-//        if (not isdigit(digit)) {
-//            throw invalid_argument("ubigint::ubigint(" + that + ")");
-//        }
-//        uvalue.push_back(digit - '0');
-//        printf("VALUE AT: CTR: %d IS %d\n", ctr, uvalue[ctr]);
-//        ctr++;
-//    }
-//}
 
 //SMALLER VALUE GETS PASSED AS PASSED
 //
@@ -140,7 +115,6 @@ ubigint ubigint::operator+ (const ubigint& that) const {
 
 
 ubigint ubigint::operator- (const ubigint& that) const {
-    printf("SUBTRACTING\n");
     //DEBUGF('u', *this << "-" << that);
     //ubigint ret_big = new ubigint();
     ubigint ret_big;

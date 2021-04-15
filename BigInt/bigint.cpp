@@ -86,7 +86,6 @@ bigint bigint::operator+ (const bigint& that) const {
 }
 
 bigint bigint::operator- (const bigint& that) const {
-    print("BIGINT SUBTRACTING");
     const bool thisNegative = this->is_negative;
     const bool thatNegative = that.is_negative;
     const bigint thisCopy = bigint(this->uvalue, this->is_negative);
