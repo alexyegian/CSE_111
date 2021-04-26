@@ -2,7 +2,7 @@
 
 #include "commands.h"
 #include "debug.h"
-
+#include "file_sys.h"
 command_hash cmd_hash {
    {"cat"   , fn_cat   },
    {"cd"    , fn_cd    },
@@ -85,12 +85,16 @@ void fn_mkdir (inode_state& state, const wordvec& words) {
 
 void fn_prompt (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   string new_prompt = words.back();
+   //words.pop_back();
+   state.prompt(new_prompt);
    DEBUGF ('c', words);
 }
 
 void fn_pwd (inode_state& state, const wordvec& words) {
-   DEBUGF ('c', state);
-   DEBUGF ('c', words);
+    DEBUGF ('c', state);
+    printf("%s",  state.get_cwd()->name.c_str());
+    DEBUGF ('c', words);
 }
 
 void fn_rm (inode_state& state, const wordvec& words) {

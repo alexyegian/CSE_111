@@ -27,6 +27,15 @@ inode_state::inode_state() {
 
 const string& inode_state::prompt() const { return prompt_; }
 
+void inode_state::prompt(const string& str) {
+    this->prompt_ = str;
+}
+inode_ptr inode_state::get_cwd() {
+    return this->cwd;
+}
+inode_ptr inode_state::get_root() {
+    return this->root;
+}
 ostream& operator<< (ostream& out, const inode_state& state) {
    out << "inode_state: root = " << state.root
        << ", cwd = " << state.cwd;
@@ -37,15 +46,19 @@ inode::inode(file_type type): inode_nr (next_inode_nr++) {
    switch (type) {
       case file_type::PLAIN_TYPE:
            contents = make_shared<plain_file>();
+           printf("LOCATION PLAIN: %p\n", static_cast<void*>(contents.get()));
            break;
       case file_type::DIRECTORY_TYPE:
            contents = make_shared<directory>();
+           printf("LOCATION DIR: %p\n", static_cast<void *>(contents.get()));
            break;
       default: assert (false);
    }
    DEBUGF ('i', "inode " << inode_nr << ", type = " << type);
 }
-
+string inode::get_name() {
+    return this->name;
+}
 size_t inode::get_inode_nr() const {
    DEBUGF ('i', "inode = " << inode_nr);
    return inode_nr;
@@ -104,7 +117,13 @@ void directory::remove (const string& filename) {
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   return nullptr;
+   //new directory below this one
+   //dirents.insert
+   file_type type = file_type::DIRECTORY_TYPE;
+   //inode node = inode(type);
+   inode_ptr ptr = make_shared<inode>(type);
+   printf("NEW DIR POS: %p\n", static_cast<void*>(ptr.get()));
+   return ptr;
 }
 
 inode_ptr directory::mkfile (const string& filename) {

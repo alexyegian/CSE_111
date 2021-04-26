@@ -48,6 +48,10 @@ int main (int argc, char** argv) {
    scan_options (argc, argv);
    bool need_echo = want_echo();
    inode_state state;
+   //CREATING NEW ROOT
+   //inode_ptr ptr = 0;
+   file_type type2 = file_type::DIRECTORY_TYPE;
+   inode ptr2 = inode(type2);
    try {
       for (;;) {
          try {

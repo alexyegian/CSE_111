@@ -43,6 +43,8 @@ class inode_state {
       inode_state();
       const string& prompt() const;
       void prompt (const string&);
+      inode_ptr get_cwd();
+      inode_ptr get_root();
 };
 
 // class inode -
@@ -65,9 +67,11 @@ class inode {
       size_t inode_nr;
       base_file_ptr contents;
    public:
+      string name = "hamburger";
       inode() = delete;
       inode (file_type);
       size_t get_inode_nr() const;
+      string get_name();
 };
 
 
@@ -96,7 +100,7 @@ class base_file {
       virtual inode_ptr mkdir (const string& dirname);
       virtual inode_ptr mkfile (const string& filename);
 };
-
+
 // class plain_file -
 // Used to hold data.
 // synthesized default ctor -
