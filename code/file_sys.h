@@ -34,8 +34,7 @@ class inode_state {
    friend class inode;
    friend ostream& operator<< (ostream& out, const inode_state&);
    private:
-      inode_ptr root {nullptr};
-      inode_ptr cwd {nullptr};
+
       string prompt_ {"% "};
    public:
       inode_state (const inode_state&) = delete; // copy ctor
@@ -45,6 +44,9 @@ class inode_state {
       void prompt (const string&);
       inode_ptr get_cwd();
       inode_ptr get_root();
+      inode_ptr root{ nullptr };
+      inode_ptr cwd{ nullptr };
+      vector<string> path;
 };
 
 // class inode -
@@ -65,13 +67,13 @@ class inode {
    private:
       static size_t next_inode_nr;
       size_t inode_nr;
-      base_file_ptr contents;
    public:
-      string name = "hamburger";
       inode() = delete;
       inode (file_type);
       size_t get_inode_nr() const;
-      string get_name();
+
+      base_file_ptr contents;
+
 };
 
 
@@ -99,6 +101,7 @@ class base_file {
       virtual void remove (const string& filename);
       virtual inode_ptr mkdir (const string& dirname);
       virtual inode_ptr mkfile (const string& filename);
+      file_type type;
 };
 
 // class plain_file -
@@ -154,6 +157,7 @@ class directory: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual void list_dirents();
 };
 
 #endif

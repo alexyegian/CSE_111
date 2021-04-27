@@ -42,23 +42,23 @@ ostream& operator<< (ostream& out, const inode_state& state) {
    return out;
 }
 
-inode::inode(file_type type): inode_nr (next_inode_nr++) {
-   switch (type) {
+inode::inode(file_type type_): inode_nr (next_inode_nr++) {
+   switch (type_) {
       case file_type::PLAIN_TYPE:
            contents = make_shared<plain_file>();
            printf("LOCATION PLAIN: %p\n", static_cast<void*>(contents.get()));
+           contents->type = type_;
            break;
       case file_type::DIRECTORY_TYPE:
            contents = make_shared<directory>();
            printf("LOCATION DIR: %p\n", static_cast<void *>(contents.get()));
+           contents->type = type_;
            break;
       default: assert (false);
    }
-   DEBUGF ('i', "inode " << inode_nr << ", type = " << type);
+   DEBUGF ('i', "inode " << inode_nr << ", type = " << type_);
 }
-string inode::get_name() {
-    return this->name;
-}
+
 size_t inode::get_inode_nr() const {
    DEBUGF ('i', "inode = " << inode_nr);
    return inode_nr;
@@ -93,6 +93,11 @@ inode_ptr base_file::mkfile (const string&) {
 size_t plain_file::size() const {
    size_t size {0};
    DEBUGF ('i', "size = " << size);
+   size += this->data.size();
+   for (auto i = this->data.begin(); i != this->data.end(); ++i){
+       string temp = *i;
+       size += temp.length();
+   }
    return size;
 }
 
@@ -107,26 +112,60 @@ void plain_file::writefile (const wordvec& words) {
 
 size_t directory::size() const {
    size_t size {0};
+   size = this->dirents.size();
    DEBUGF ('i', "size = " << size);
    return size;
 }
-
+void directory::list_dirents() {
+    for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
+        if (i->second->contents->type == file_type::PLAIN_TYPE) {
+            plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
+            printf("INODE%lu  SIZE%lu  NAME%s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+        }
+        else {
+            directory* temp = static_cast<directory*>(i->second->contents.get());
+            printf("INODE%lu  SIZE%lu  NAME%s", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+        }
+    }
+}
 void directory::remove (const string& filename) {
    DEBUGF ('i', filename);
+   auto child = this->dirents.find(filename);
+   if (child != dirents.end()) {
+       inode_ptr real_child = child->second;
+       if (real_child->contents->type == file_type::PLAIN_TYPE) {
+           //file not a direcotry
+           this->dirents.erase(filename);
+           real_child.reset();
+           return;
+       }
+       directory* a = static_cast<directory*>(real_child->contents.get());
+       if (a->size()) {
+           printf("HELLOW");
+           this->dirents.erase(filename);
+           real_child.reset();
+       }
+
+   }
+   //ERROR PATH NO EXIST
 }
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
-   if (this->dirents.find(dirname) == dirents.end()) {
+   if (this->dirents.find(dirname) != dirents.end()) {
        //ERROR DIRNAME ALREADY EXISTS
        return nullptr;
    }
     //MAKE DIRETORY
-   file_type type = file_type::DIRECTORY_TYPE;
-   inode_ptr ptr = make_shared<inode>(type);
+   file_type type_ = file_type::DIRECTORY_TYPE;
+   inode_ptr ptr = make_shared<inode>(type_);
 
    //MAP TO DIRNAME
    this->dirents.insert({ dirname, ptr });
+   directory* a = static_cast<directory*>(ptr->contents.get());
+   inode_ptr this_node = this->dirents.find(".")->second;
+   a->dirents.insert({".", ptr});
+   a->dirents.insert({ "..", this_node });
    //new directory below this one
    //dirents.insert
    //inode node = inode(type);
@@ -136,12 +175,12 @@ inode_ptr directory::mkdir (const string& dirname) {
 
 inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
-   if (this->dirents.find(filename) == dirents.end()) {
+   if (this->dirents.find(filename) != dirents.end()) {
        //ERROR DIRNAME ALREADY EXISTS
        return nullptr;
    }
-   file_type type = file_type::PLAIN_TYPE;
-   inode_ptr ptr = make_shared<inode>(type);
+   file_type type_ = file_type::PLAIN_TYPE;
+   inode_ptr ptr = make_shared<inode>(type_);
    this->dirents.insert({ filename, ptr });
 
    return nullptr;
