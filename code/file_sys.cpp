@@ -117,17 +117,33 @@ void directory::remove (const string& filename) {
 
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
+   if (this->dirents.find(dirname) == dirents.end()) {
+       //ERROR DIRNAME ALREADY EXISTS
+       return nullptr;
+   }
+    //MAKE DIRETORY
+   file_type type = file_type::DIRECTORY_TYPE;
+   inode_ptr ptr = make_shared<inode>(type);
+
+   //MAP TO DIRNAME
+   this->dirents.insert({ dirname, ptr });
    //new directory below this one
    //dirents.insert
-   file_type type = file_type::DIRECTORY_TYPE;
    //inode node = inode(type);
-   inode_ptr ptr = make_shared<inode>(type);
    printf("NEW DIR POS: %p\n", static_cast<void*>(ptr.get()));
    return ptr;
 }
 
 inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
+   if (this->dirents.find(filename) == dirents.end()) {
+       //ERROR DIRNAME ALREADY EXISTS
+       return nullptr;
+   }
+   file_type type = file_type::PLAIN_TYPE;
+   inode_ptr ptr = make_shared<inode>(type);
+   this->dirents.insert({ filename, ptr });
+
    return nullptr;
 }
 
