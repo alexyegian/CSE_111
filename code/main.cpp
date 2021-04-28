@@ -49,6 +49,7 @@ int main (int argc, char** argv) {
    bool need_echo = want_echo();
    inode_state state;
    //CREATING NEW ROOT
+   printf("INODE ROOT: %p  CWD: INODE ROOT: %p\n", static_cast<void*>(state.root.get()),  static_cast<void*>(state.cwd.get()));
    //inode_ptr ptr = 0;
    file_type type2 = file_type::DIRECTORY_TYPE;
    inode ptr2 = inode(type2);
@@ -67,13 +68,23 @@ int main (int argc, char** argv) {
                break;
             }
             if (need_echo) cout << line << endl;
-   
+            printf("LINE: %s\n", line.c_str());
             // Split the line into words and lookup the appropriate
             // function.  Complain or call it.
             wordvec words = split (line, " \t");
             DEBUGF ('y', "words = " << words);
+
+            for (auto i = words.begin(); i != words.end(); ++i) {
+                printf("WORD: %s\n", i->c_str());
+            }
+
             command_fn fn = find_command_fn (words.at(0));
-            fn (state, words);
+            fn(state, words);
+            size_t bef_size = words.size();
+            for (size_t i = 0; i <bef_size; i++) {
+                printf("ONCE: %lu\n", words.size());
+                words.pop_back();
+            }
          }catch (file_error& error) {
             complain() << error.what() << endl;
          }catch (command_error& error) {

@@ -147,12 +147,12 @@ class plain_file: public base_file {
 class directory: public base_file {
    private:
       // Must be a map, not unordered_map, so printing is lexicographic
-      map<string,inode_ptr> dirents;
       virtual const string& error_file_type() const override {
          static const string result = "directory";
          return result;
       }
    public:
+       map<string, inode_ptr> dirents;
       virtual size_t size() const override;
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;

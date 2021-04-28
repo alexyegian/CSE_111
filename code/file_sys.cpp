@@ -21,8 +21,22 @@ ostream& operator<< (ostream& out, file_type type) {
 }
 
 inode_state::inode_state() {
-   DEBUGF ('i', "root = " << root << ", cwd = " << cwd
-          << ", prompt = \"" << prompt() << "\"");
+    //MAKE DIRETORY
+    file_type type_ = file_type::DIRECTORY_TYPE;
+    inode_ptr ptr = make_shared<inode>(type_);
+    //MAP TO DIRNAME
+    directory* a = static_cast<directory*>(ptr->contents.get());
+    a->dirents.insert({ ".", ptr });
+    a->dirents.insert({ "..", ptr });
+    path.push_back("\\");
+    //new directory below this one
+    //dirents.insert
+    //inode node = inode(type);
+   // printf("NEW DIR POS: %p\n", static_cast<void*>(ptr.get()));
+   //DEBUGF ('i', "root = " << root << ", cwd = " << cwd
+   //       << ", prompt = \"" << prompt() << "\"");
+    root = ptr;
+    cwd = ptr;
 }
 
 const string& inode_state::prompt() const { return prompt_; }
@@ -112,20 +126,25 @@ void plain_file::writefile (const wordvec& words) {
 
 size_t directory::size() const {
    size_t size {0};
+   printf("CHECKING MAP SIZE\n");
    size = this->dirents.size();
+   printf("CHECKING SIZE DIR, THIS SIZE IS: %lu\n", size);
    DEBUGF ('i', "size = " << size);
    return size;
 }
 void directory::list_dirents() {
     for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
-        if (i->second->contents->type == file_type::PLAIN_TYPE) {
-            plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
-            printf("INODE%lu  SIZE%lu  NAME%s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+        if (i->first != "." && i->first != "..") {
+            if (i->second->contents->type == file_type::PLAIN_TYPE) {
+                plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
+                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+            }
+            else {
+                directory* temp = static_cast<directory*>(i->second->contents.get());
+                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size()-2, i->first.c_str());
+            }
         }
-        else {
-            directory* temp = static_cast<directory*>(i->second->contents.get());
-            printf("INODE%lu  SIZE%lu  NAME%s", i->second->get_inode_nr(), temp->size(), i->first.c_str());
-        }
+
     }
 }
 void directory::remove (const string& filename) {

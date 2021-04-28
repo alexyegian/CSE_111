@@ -50,7 +50,7 @@ void fn_cd(inode_state& state, const wordvec& words) {
     DEBUGF('c', state);
     DEBUGF('c', words);
     string pathname = words.back();
-    directory* a = static_cast<directory>(state.cwd->contents.get());
+    directory* a = static_cast<directory*>(state.cwd->contents.get());
     std::map<string, inode_ptr>::iterator it;
     if (words.back() == "..")
     {
@@ -71,8 +71,7 @@ void fn_cd(inode_state& state, const wordvec& words) {
             //error
             return;
         }
-        directory b =
-            static_cast<directory*>(state.cwd->contents.get());
+        directory* b = static_cast<directory*>(state.cwd->contents.get());
         it = b->dirents.find(words2[i]);
         state.cwd = it->second;
         state.path.push_back(words2[i]);
@@ -95,20 +94,18 @@ void fn_exit (inode_state& state, const wordvec& words) {
 void fn_ls (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
    inode_ptr start_ptr = state.get_cwd();
-   printf("WORDS: ");
-   for (auto i = words.begin(); i != words.end(); ++i) {
-       string temp = *i;
-       printf("%s, ", temp.c_str());
-   }            
-   wordvec words2 = split(words[1], "/\t");
-   printf("WORDS2: ");
-   for (auto i = words2.begin(); i != words2.end(); ++i) {
-       string temp = *i;
-       printf("%s, ", temp.c_str());
+   if (words.size() > 1) {
+       printf("WORDS 1: %s\n", words[1].c_str());
+
+       // "dir1/2/3"
+       // dir1 2 3
+       //NAVIGATION GOES HERE
+
+       //CHANGE DIRECTORY TO DESTINATION, DO THIS, THEN CHANGE CWD BACK TO OLD ONE
    }
-   //CHANGE DIRECTORY TO DESTINATION, DO THIS, THEN CHANGE CWD BACK TO OLD ONE
-   //directory* dir = static_cast<directory*>(state.get_cwd()->contents.get());
-   //dir->list_dirents();
+
+   directory* dir = static_cast<directory*>(state.get_cwd()->contents.get());
+   dir->list_dirents();
    state.cwd = start_ptr;
    DEBUGF ('c', words);
 }
@@ -120,18 +117,23 @@ void fn_lsr (inode_state& state, const wordvec& words) {
 
 void fn_make (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   directory* a = static_cast<directory*>(state.cwd->contents.get());
+   printf("%s\n", words.back().c_str());
+   a->mkfile(words.back());
    DEBUGF ('c', words);
 }
 
 void fn_mkdir (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   directory* a = static_cast<directory*>(state.cwd->contents.get());
+   printf("%s\n", words.back().c_str());
+   a->mkdir(words.back());
    DEBUGF ('c', words);
 }
 
 void fn_prompt (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
    string new_prompt = words.back();
-   //words.pop_back();
    state.prompt(new_prompt);
    DEBUGF ('c', words);
 }
@@ -140,13 +142,13 @@ void fn_pwd(inode_state& state, const wordvec& words) {
     DEBUGF('c', state);
     DEBUGF('c', words);
     for (long i = 0; static_cast<unsigned>(i)
-        < state.path.size() - 1; i++)
+        < state.path.size(); i++)
     {
         if (state.path.size() == 0)
         {
             cout << "PWD PATHCOPY EMPTY" << endl;
         }
-        if (static_cast<unsigned long>(i) == state.path.size() - 1)
+        if (i != 0 && static_cast<unsigned long>(i) == state.path.size() - 1)
         {
             cout << state.path[i] << endl;
             continue;
@@ -158,6 +160,8 @@ void fn_pwd(inode_state& state, const wordvec& words) {
 
 void fn_rm (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   if (words.size() > 1) {
+   }
    DEBUGF ('c', words);
 }
 

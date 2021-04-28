@@ -28,13 +28,13 @@ class command_error: public runtime_error {
 //STATUSES NOT DONE FOR ANY OF THESE GO BACK LATER
 void fn_cat    (inode_state& state, const wordvec& words);
 void fn_cd     (inode_state& state, const wordvec& words);//DONE NOT TESTED
-void fn_echo   (inode_state& state, const wordvec& words);//DONE
-void fn_exit   (inode_state& state, const wordvec& words);//DONE
+void fn_echo   (inode_state& state, const wordvec& words);//DONE CHECK
+void fn_exit   (inode_state& state, const wordvec& words);//DONE CHECK
 void fn_ls     (inode_state& state, const wordvec& words);//DONE NOT TESTED
 void fn_lsr    (inode_state& state, const wordvec& words);
-void fn_make   (inode_state& state, const wordvec& words);//DONE NOT TESTED
+void fn_make   (inode_state& state, const wordvec& words);//DONE NOT TESTED ADD IN WORDS INITIALIZE IN MAKE
 void fn_mkdir  (inode_state& state, const wordvec& words);//DONE BUT NOT TESTED
-void fn_prompt (inode_state& state, const wordvec& words);//NOT DONE ADD IN WORDS INITIALIZE IN MAKE
+void fn_prompt (inode_state& state, const wordvec& words);//DONE CHECK 
 void fn_pwd    (inode_state& state, const wordvec& words);//DONE BUT NOT TESTED
 void fn_rm     (inode_state& state, const wordvec& words);//NOT DONE NEED TO TRAVERSE TO PARENT BEFORE REMOVING
 void fn_rmr    (inode_state& state, const wordvec& words);
