@@ -97,7 +97,7 @@ void fn_ls (inode_state& state, const wordvec& words) {
    if (words.size() > 1) {
        printf("WORDS 1: %s\n", words[1].c_str());
 
-       // "dir1/2/3"
+       // dir1/2/3
        // dir1 2 3
        //NAVIGATION GOES HERE
 
@@ -160,8 +160,11 @@ void fn_pwd(inode_state& state, const wordvec& words) {
 
 void fn_rm (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
-   if (words.size() > 1) {
-   }
+   directory* a = static_cast<directory*>(state.cwd->contents.get());
+   printf("%s\n", words.back().c_str());
+
+   string remove_word = "";
+   a->remove(remove_word);
    DEBUGF ('c', words);
 }
 
