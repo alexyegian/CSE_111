@@ -121,6 +121,7 @@ const wordvec& plain_file::readfile() const {
 }
 
 void plain_file::writefile (const wordvec& words) {
+    data = words;
    DEBUGF ('i', words);
 }
 
@@ -202,6 +203,36 @@ inode_ptr directory::mkfile (const string& filename) {
    inode_ptr ptr = make_shared<inode>(type_);
    this->dirents.insert({ filename, ptr });
 
-   return nullptr;
+   return ptr;
 }
+
+//inode_ptr directory::mkfile2(const string& filename, const wordvec& init_val) {
+//    DEBUGF('i', filename);
+//    if (this->dirents.find(filename) != dirents.end()) {
+//        //ERROR DIRNAME ALREADY EXISTS
+//        return nullptr;
+//    }
+//    printf("%s\n", init_val[0].c_str());
+//    file_type type_ = file_type::PLAIN_TYPE;
+//    inode_ptr ptr = make_shared<inode>(type_);
+//    this->dirents.insert({ filename, ptr });
+//
+//    return nullptr;
+//}
+
+//inode_ptr directory::mkfile(const string& filename, const wordvec& init_val) {
+//    DEBUGF('i', filename);
+//    if (this->dirents.find(filename) != dirents.end()) {
+//        //ERROR DIRNAME ALREADY EXISTS
+//        return nullptr;
+//    }
+//    file_type type_ = file_type::PLAIN_TYPE;
+//    inode_ptr ptr = make_shared<inode>(type_);
+//    printf("%s\n", init_val[0].c_str());
+//    //plain_file* a = static_cast<plain_file*>(ptr->contents.get());
+//    //a->writefile(init_val);
+//    this->dirents.insert({ filename, ptr });
+//
+//    return nullptr;
+//}
 

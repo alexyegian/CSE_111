@@ -27,16 +27,16 @@ class command_error: public runtime_error {
 // execution functions -
 //STATUSES NOT DONE FOR ANY OF THESE GO BACK LATER
 void fn_cat    (inode_state& state, const wordvec& words);
-void fn_cd     (inode_state& state, const wordvec& words);//DONE NOT TESTED
-void fn_echo   (inode_state& state, const wordvec& words);//DONE CHECK
-void fn_exit   (inode_state& state, const wordvec& words);//DONE CHECK
-void fn_ls     (inode_state& state, const wordvec& words);//DONE NOT TESTED
+void fn_cd     (inode_state& state, const wordvec& words);//NOT DONE DOESNT CHECK WETHER IT IS A FILE, COULD TRY TO CD INTO FILE
+void fn_echo   (inode_state& state, const wordvec& words);//DONE CHECKED FULLY
+void fn_exit   (inode_state& state, const wordvec& words);//DONE CHECKED FULLY
+void fn_ls     (inode_state& state, const wordvec& words);//NOT DONE, IMPROPER PRINT STATEMENTS, COULD BE WRONG SIZE FILES
 void fn_lsr    (inode_state& state, const wordvec& words);
-void fn_make   (inode_state& state, const wordvec& words);//DONE NOT TESTED ADD IN WORDS INITIALIZE IN MAKE
-void fn_mkdir  (inode_state& state, const wordvec& words);//DONE BUT NOT TESTED
-void fn_prompt (inode_state& state, const wordvec& words);//DONE CHECK 
-void fn_pwd    (inode_state& state, const wordvec& words);//DONE BUT NOT TESTED
-void fn_rm     (inode_state& state, const wordvec& words);//NOT DONE NEED TO TRAVERSE TO PARENT BEFORE REMOVING
+void fn_make   (inode_state& state, const wordvec& words);//DONE NOT TESTED
+void fn_mkdir  (inode_state& state, const wordvec& words);//DONE CHECKED
+void fn_prompt (inode_state& state, const wordvec& words);//DONE CHECKED FULLY
+void fn_pwd    (inode_state& state, const wordvec& words);//DONE CHECKED NOT FULLY, STIL PRINTING OUT // IN BEGINNING
+void fn_rm     (inode_state& state, const wordvec& words);//NOT DONE, NEED NAVIGATION
 void fn_rmr    (inode_state& state, const wordvec& words);
 
 command_fn find_command_fn (const string& command);

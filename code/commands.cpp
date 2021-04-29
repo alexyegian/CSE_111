@@ -118,8 +118,22 @@ void fn_lsr (inode_state& state, const wordvec& words) {
 void fn_make (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
    directory* a = static_cast<directory*>(state.cwd->contents.get());
-   printf("%s\n", words.back().c_str());
-   a->mkfile(words.back());
+   if (words.size() > 2) {
+       //PROVIDED INIT VAL
+       wordvec vec;
+       for (size_t i = 2; i < words.size(); i++) {
+           vec.push_back(words[i]);
+       }
+       inode_ptr ptr = a->mkfile(words[1]);
+       if (ptr == nullptr) {
+           return;
+       }
+       plain_file* new_file = static_cast<plain_file*>(ptr->contents.get());
+       new_file->writefile(vec);
+   }
+   else {
+       a->mkfile(words.back());
+   }
    DEBUGF ('c', words);
 }
 
@@ -163,8 +177,8 @@ void fn_rm (inode_state& state, const wordvec& words) {
    directory* a = static_cast<directory*>(state.cwd->contents.get());
    printf("%s\n", words.back().c_str());
 
-   string remove_word = "";
-   a->remove(remove_word);
+   //string remove_word = "";
+   a->remove(words[1]);
    DEBUGF ('c', words);
 }
 
