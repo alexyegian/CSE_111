@@ -38,6 +38,7 @@ void fn_prompt (inode_state& state, const wordvec& words);//DONE CHECKED FULLY
 void fn_pwd    (inode_state& state, const wordvec& words);//DONE CHECKED NOT FULLY, STIL PRINTING OUT // IN BEGINNING
 void fn_rm     (inode_state& state, const wordvec& words);//NOT DONE, NEED NAVIGATION
 void fn_rmr    (inode_state& state, const wordvec& words);
+void fn_cmnt   (inode_state& state, const wordvec& words);
 
 command_fn find_command_fn (const string& command);
 

@@ -17,7 +17,7 @@ command_hash cmd_hash {
    {"pwd"   , fn_pwd   },
    {"rm"    , fn_rm    },
    {"rmr"   , fn_rmr   },
-   //ADD A HASH AND FUNCTION FOR # OPERATIONS
+   {"#"     , fn_cmnt  },
 };
 
 command_fn find_command_fn (const string& cmd) {
@@ -41,9 +41,26 @@ int exit_status_message() {
    cout << exec::execname() << ": exit(" << status << ")" << endl;
    return status;
 }
+void fn_cmnt(inode_state& state, const wordvec& words) {
+    for (int i = 0; static_cast<unsigned long>(i) < words.size(); i++)
+    {
+        cout << words[i];
+        if (static_cast<unsigned long>(i) != words.size())
+        {
+            cout << " ";
+        }
+    }
+    cout << endl;
+}
 
 void fn_cat (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   if (words.size() == 1)
+   {
+       file_error error = file_error("ERROR: NO FILE NAME GIVEN");
+       throw error;
+       return;
+   }
    //NAVIGATION ASSIGN SUPPOSED TO BE TO INODE PTR NOT CWD
    wordvec words2 = split(words[1], "/\t");
    inode_ptr stateHold = state.cwd;
@@ -67,6 +84,7 @@ void fn_cat (inode_state& state, const wordvec& words) {
        for (size_t i = 0; i < b.size(); i++) {
            printf("%s ",b[i].c_str());
        }
+       cout << endl;
    }
    DEBUGF ('c', words);
    state.cwd = stateHold;
@@ -75,11 +93,21 @@ void fn_cat (inode_state& state, const wordvec& words) {
 void fn_cd(inode_state& state, const wordvec& words) {
     DEBUGF('c', state);
     DEBUGF('c', words);
+    if (words.size() == 1)
+    {
+        file_error error = file_error("ERROR: NO DIRECTORY NAME GIVEN");
+        throw error;
+        return;
+    }
     string pathname = words.back();
     directory* a = static_cast<directory*>(state.cwd->contents.get());
     std::map<string, inode_ptr>::iterator it;
     if (words.back() == "..")
     {
+        if (state.path.size() < 2)
+        {
+            return;
+        }
         it = a->dirents.find("..");
         state.cwd = it->second;
         state.path.pop_back();
@@ -87,7 +115,7 @@ void fn_cd(inode_state& state, const wordvec& words) {
     }
     wordvec words2 = split(words[1], "/\t");
     inode_ptr stateHold = state.cwd;
-    vector<string> holdVector; // ===================================================== remove state.path inputs when run into error
+    vector<string> holdVector; 
     for (int i = 0; static_cast<unsigned long>(i)
         < words2.size(); i++)
     {
@@ -107,7 +135,12 @@ void fn_cd(inode_state& state, const wordvec& words) {
             file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
             throw error;
         }
-        state.path.push_back(words2[i]);
+        holdVector.push_back(words2[i]);
+    }
+    for (int i = 0; static_cast<unsigned long>(i)
+        < holdVector.size(); i++)
+    {
+        state.path.push_back(holdVector[i]);
     }
 }
 
@@ -206,6 +239,12 @@ void fn_lsr(inode_state& state, const wordvec& words) {
 
 void fn_make(inode_state& state, const wordvec& words) {
     DEBUGF('c', state);
+    if (words.size() == 1)
+    {
+        file_error error = file_error("ERROR: NO FILE NAME GIVEN");
+        throw error;
+        return;
+    }
     wordvec words2 = split(words[1], "/\t");
     inode_ptr stateHold = state.cwd;
     std::map<string, inode_ptr>::iterator it;
@@ -251,6 +290,12 @@ void fn_make(inode_state& state, const wordvec& words) {
 
 void fn_mkdir(inode_state& state, const wordvec& words) {
     DEBUGF('c', state);
+    if (words.size() == 1)
+    {
+        file_error error = file_error("ERROR: NO DIRECTORY NAME GIVEN");
+        throw error;
+        return;
+    }
     wordvec words2 = split(words[1], "/\t");
     inode_ptr stateHold = state.cwd;
     std::map<string, inode_ptr>::iterator it;
@@ -281,6 +326,12 @@ void fn_mkdir(inode_state& state, const wordvec& words) {
 
 void fn_prompt (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   if (words.size() == 1)
+   {
+       file_error error = file_error("ERROR: NO PROMPT STRING GIVEN");
+       throw error;
+       return;
+   }
    string new_prompt = words.back();
    state.prompt(new_prompt);
    DEBUGF ('c', words);
