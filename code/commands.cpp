@@ -17,6 +17,7 @@ command_hash cmd_hash {
    {"pwd"   , fn_pwd   },
    {"rm"    , fn_rm    },
    {"rmr"   , fn_rmr   },
+   //ADD A HASH AND FUNCTION FOR # OPERATIONS
 };
 
 command_fn find_command_fn (const string& cmd) {
@@ -44,6 +45,21 @@ int exit_status_message() {
 void fn_cat (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
    //NAVIGATION ASSIGN SUPPOSED TO BE TO INODE PTR NOT CWD
+   wordvec words2 = split(words[1], "/\t");
+   inode_ptr stateHold = state.cwd;
+   std::map<string, inode_ptr>::iterator it;
+   for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
+   {
+       cout << "PARSED WORD: " << words2[i] << endl;
+       directory* a = static_cast<directory*>(state.cwd->contents.get());
+       if (a->dirents.find(words2[i]) == a->dirents.end())
+       {
+           //throw error
+           return;
+       }
+       it = a->dirents.find(words2[i]);
+       state.cwd = it->second;
+   }
    inode_ptr ptr = state.cwd;
    if (ptr->contents->type == file_type::PLAIN_TYPE) {
        plain_file* a = static_cast<plain_file*>(state.cwd->contents.get());
@@ -53,6 +69,7 @@ void fn_cat (inode_state& state, const wordvec& words) {
        }
    }
    DEBUGF ('c', words);
+   state.cwd = stateHold;
 }
 
 void fn_cd(inode_state& state, const wordvec& words) {
@@ -68,21 +85,28 @@ void fn_cd(inode_state& state, const wordvec& words) {
         state.path.pop_back();
         return;
     }
-    //check if pathname is a directory not a file
     wordvec words2 = split(words[1], "/\t");
     inode_ptr stateHold = state.cwd;
+    vector<string> holdVector; // ===================================================== remove state.path inputs when run into error
     for (int i = 0; static_cast<unsigned long>(i)
         < words2.size(); i++)
     {
-        if (a->dirents.find(pathname) == a->dirents.end())
+        directory* b = static_cast<directory*>(state.cwd->contents.get());
+        if (b->dirents.find(words2[i]) == b->dirents.end())
         {
             state.cwd = stateHold;
-            //error
+            file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+            throw error;
             return;
         }
-        directory* b = static_cast<directory*>(state.cwd->contents.get());
         it = b->dirents.find(words2[i]);
         state.cwd = it->second;
+        if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+        {
+            state.cwd = stateHold;
+            file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+            throw error;
+        }
         state.path.push_back(words2[i]);
     }
 }
@@ -113,24 +137,71 @@ void fn_ls(inode_state& state, const wordvec& words) {
             directory* a = static_cast<directory*>(state.cwd->contents.get());
             if (a->dirents.find(words2[i]) == a->dirents.end())
             {
-                //throw error
+                state.cwd = stateHold;
+                file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+                throw error;
                 return;
+            }
+            if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+            {
+                file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+                throw error;
             }
             it = a->dirents.find(words2[i]);
             state.cwd = it->second;
         }
     }
-
-    directory* dir = static_cast<directory*>(state.get_cwd()->contents.get());
-    dir->list_dirents();
+     if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+     {
+        file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+        throw error;
+     }
+     directory* dir = static_cast<directory*>(state.get_cwd()->contents.get());
+     dir->list_dirents();
+     DEBUGF('c', words);
+     state.cwd = stateHold;
+}
+void fn_lsr(inode_state& state, const wordvec& words) {
+    DEBUGF('c', state);
+    inode_ptr stateHold = state.cwd;
+    stack<string> name_stack;
+    wordvec words2 = split(words[1], "/\t");
+    std::map<string, inode_ptr>::iterator it;
+    for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
+    {
+        cout << "PARSED WORD: " << words2[i] << endl;
+        directory* a = static_cast<directory*>(state.cwd->contents.get());
+        if (a->dirents.find(words2[i]) == a->dirents.end())
+        {
+            state.cwd = stateHold;
+            file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+            throw error;
+            return;
+        }
+        it = a->dirents.find(words2[i]);
+        state.cwd = it->second;
+        if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+        {
+            state.cwd = stateHold;
+            file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+            throw error;
+        }
+    }
+    inode_ptr dir = state.cwd;
+    name_stack.push(state.path[state.path.size() - 1]);
+    stack <inode_ptr>  dir_stack;
+    dir_stack.push(dir);
+    while (dir_stack.empty() != true) {
+        dir = dir_stack.top();
+        directory* temp = static_cast<directory*>(dir->contents.get());
+        string name = name_stack.top();
+        printf("%s:\n", name.c_str());
+        dir_stack.pop();
+        name_stack.pop();
+        temp->list_dirents_add_to(dir_stack, name_stack);
+    }
     DEBUGF('c', words);
     state.cwd = stateHold;
-}
-
-
-void fn_lsr (inode_state& state, const wordvec& words) {
-   DEBUGF ('c', state);
-   DEBUGF ('c', words);
 }
 
 void fn_make(inode_state& state, const wordvec& words) {
@@ -144,8 +215,15 @@ void fn_make(inode_state& state, const wordvec& words) {
         directory* a = static_cast<directory*>(state.cwd->contents.get());
         if (a->dirents.find(words2[i]) == a->dirents.end())
         {
-            //throw error
+            state.cwd = stateHold;
+            file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+            throw error;
             return;
+        }
+        if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+        {
+            file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+            throw error;
         }
         it = a->dirents.find(words2[i]);
         state.cwd = it->second;
@@ -182,8 +260,15 @@ void fn_mkdir(inode_state& state, const wordvec& words) {
         directory* a = static_cast<directory*>(state.cwd->contents.get());
         if (a->dirents.find(words2[i]) == a->dirents.end())
         {
-            //throw error
+            state.cwd = stateHold;
+            file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+            throw error;
             return;
+        }
+        if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+        {
+            file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+            throw error;
         }
         it = a->dirents.find(words2[i]);
         state.cwd = it->second;
@@ -220,18 +305,67 @@ void fn_pwd(inode_state& state, const wordvec& words) {
 
     }
 }
+
 void fn_rm (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
+   wordvec words2 = split(words[1], "/\t");
+   inode_ptr stateHold = state.cwd;
+   std::map<string, inode_ptr>::iterator it;
+   for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
+   {
+       cout << "PARSED WORD: " << words2[i] << endl;
+       directory* a = static_cast<directory*>(state.cwd->contents.get());
+       if (a->dirents.find(words2[i]) == a->dirents.end())
+       {
+           state.cwd = stateHold;
+           file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+           throw error;
+           return;
+       }
+       if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+       {
+           file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+           throw error;
+       }
+       it = a->dirents.find(words2[i]);
+       state.cwd = it->second;
+   }
    directory* a = static_cast<directory*>(state.cwd->contents.get());
    printf("%s\n", words.back().c_str());
 
    //string remove_word = "";
-   a->remove(words[1]);
+   a->remove(words2.back());
    DEBUGF ('c', words);
+   state.cwd = stateHold;
 }
 
-void fn_rmr (inode_state& state, const wordvec& words) {
-   DEBUGF ('c', state);
-   DEBUGF ('c', words);
+void fn_rmr(inode_state& state, const wordvec& words) {
+    DEBUGF('c', state);
+    wordvec words2 = split(words[1], "/\t");
+    inode_ptr stateHold = state.cwd;
+    std::map<string, inode_ptr>::iterator it;
+    for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
+    {
+        cout << "PARSED WORD: " << words2[i] << endl;
+        directory* a = static_cast<directory*>(state.cwd->contents.get());
+        if (a->dirents.find(words2[i]) == a->dirents.end())
+        {
+            state.cwd = stateHold;
+            file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+            throw error;
+            return;
+        }
+        if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+        {
+            file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+            throw error;
+        }
+        it = a->dirents.find(words2[i]);
+        state.cwd = it->second;
+    }
+    inode_ptr dir = state.cwd;
+    directory* temp = static_cast<directory*>(dir->contents.get());
+    temp->remove_recursive();
+    DEBUGF('c', words);
+    state.cwd = stateHold;
 }
-

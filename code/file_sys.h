@@ -8,6 +8,7 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <stack>
 using namespace std;
 
 #include "util.h"
@@ -151,13 +152,15 @@ class directory: public base_file {
          static const string result = "directory";
          return result;
       }
-   public:
-       map<string, inode_ptr> dirents;
-      virtual size_t size() const override;
-      virtual void remove (const string& filename) override;
-      virtual inode_ptr mkdir (const string& dirname) override;
-      virtual inode_ptr mkfile (const string& filename) override;
-      virtual void list_dirents();
+    public:
+        map<string, inode_ptr> dirents;
+        virtual size_t size() const override;
+        virtual void remove(const string& filename) override;
+        virtual inode_ptr mkdir(const string& dirname) override;
+        virtual inode_ptr mkfile(const string& filename) override;
+        virtual void list_dirents();
+        void list_dirents_add_to(stack<inode_ptr>& add_stack, stack<string>& name_stack);
+        void remove_recursive();
 };
 
 #endif

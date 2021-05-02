@@ -87,6 +87,7 @@ int main (int argc, char** argv) {
             }
          }catch (file_error& error) {
             complain() << error.what() << endl;
+            exec::status(1);
          }catch (command_error& error) {
             complain() << error.what() << endl;
          }

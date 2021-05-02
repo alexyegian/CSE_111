@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
+#include <stack>
 
 using namespace std;
 
@@ -112,6 +113,10 @@ size_t plain_file::size() const {
        string temp = *i;
        size += temp.length();
    }
+   if (size > 0)
+   {
+       size = size - 1;
+   }
    return size;
 }
 
@@ -135,16 +140,14 @@ size_t directory::size() const {
 }
 void directory::list_dirents() {
     for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
-        if (i->first != "." && i->first != "..") {
             if (i->second->contents->type == file_type::PLAIN_TYPE) {
                 plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
-                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+                printf("%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
             }
             else {
                 directory* temp = static_cast<directory*>(i->second->contents.get());
-                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size()-2, i->first.c_str());
+                printf("%lu  %lu  %s\n/", i->second->get_inode_nr(), temp->size()-2, i->first.c_str());
             }
-        }
 
     }
 }
@@ -206,33 +209,42 @@ inode_ptr directory::mkfile (const string& filename) {
    return ptr;
 }
 
-//inode_ptr directory::mkfile2(const string& filename, const wordvec& init_val) {
-//    DEBUGF('i', filename);
-//    if (this->dirents.find(filename) != dirents.end()) {
-//        //ERROR DIRNAME ALREADY EXISTS
-//        return nullptr;
-//    }
-//    printf("%s\n", init_val[0].c_str());
-//    file_type type_ = file_type::PLAIN_TYPE;
-//    inode_ptr ptr = make_shared<inode>(type_);
-//    this->dirents.insert({ filename, ptr });
-//
-//    return nullptr;
-//}
+void directory::list_dirents_add_to(stack<inode_ptr>& add_stack, stack<string>& name_stack) {
+    for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
+        if (i->first != "." && i->first != "..") {
+            if (i->second->contents->type == file_type::PLAIN_TYPE) {
+                plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
+                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+            }
+            else {
+                printf("ADD TO ADD STACK\n");
+                add_stack.push(i->second);
+                name_stack.push(i->first);
+                printf("ADD STACK SIZE: %lu\n", add_stack.size());
+                directory* temp = static_cast<directory*>(i->second->contents.get());
+                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size() - 2, i->first.c_str());
+            }
+        }
 
-//inode_ptr directory::mkfile(const string& filename, const wordvec& init_val) {
-//    DEBUGF('i', filename);
-//    if (this->dirents.find(filename) != dirents.end()) {
-//        //ERROR DIRNAME ALREADY EXISTS
-//        return nullptr;
-//    }
-//    file_type type_ = file_type::PLAIN_TYPE;
-//    inode_ptr ptr = make_shared<inode>(type_);
-//    printf("%s\n", init_val[0].c_str());
-//    //plain_file* a = static_cast<plain_file*>(ptr->contents.get());
-//    //a->writefile(init_val);
-//    this->dirents.insert({ filename, ptr });
-//
-//    return nullptr;
-//}
+    }
+}
 
+void directory::remove_recursive() {
+    for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
+        if (i->first != "." && i->first != "..") {
+            inode_ptr real_child = i->second;
+            if (i->second->contents->type == file_type::PLAIN_TYPE) {
+                printf("REMOVING FILE\n");
+                this->dirents.erase(i->first);
+                real_child.reset();
+            }
+            else {
+                directory* a = static_cast<directory*>(real_child->contents.get());
+                printf("START RECURSIVE REMOVE\n");
+                a->remove_recursive();
+                this->dirents.erase(i->first);
+                real_child.reset();
+            }
+        }
+    }
+}
