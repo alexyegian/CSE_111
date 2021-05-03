@@ -101,7 +101,7 @@ void fn_cd(inode_state& state, const wordvec& words) {
     string pathname = words.back();
     directory* a = static_cast<directory*>(state.cwd->contents.get());
     std::map<string, inode_ptr>::iterator it;
-    if (words.back() == "..")
+    if (words.back() == ".." || words.back() == ".")
     {
         if (state.path.size() < 2)
         {
@@ -241,45 +241,45 @@ void fn_make(inode_state& state, const wordvec& words) {
         return;
     }
     wordvec words2 = split(words[1], "/\t");
-    inode_ptr stateHold = state.cwd;
-    std::map<string, inode_ptr>::iterator it;
-    for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
-    {
-        directory* a = static_cast<directory*>(state.cwd->contents.get());
-        if (a->dirents.find(words2[i]) == a->dirents.end())
-        {
-            state.cwd = stateHold;
-            file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
-            throw error;
-            return;
-        }
-        if (state.cwd->contents->type == file_type::PLAIN_TYPE)
-        {
-            file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
-            throw error;
-        }
-        it = a->dirents.find(words2[i]);
-        state.cwd = it->second;
-    }
+inode_ptr stateHold = state.cwd;
+std::map<string, inode_ptr>::iterator it;
+for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
+{
     directory* a = static_cast<directory*>(state.cwd->contents.get());
-    if (words.size() > 2) {
-        //PROVIDED INIT VAL
-        wordvec vec;
-        for (size_t i = 2; i < words.size(); i++) {
-            vec.push_back(words[i]);
-        }
-        inode_ptr ptr = a->mkfile(words2.back());
-        if (ptr == nullptr) {
-            return;
-        }
-        plain_file* new_file = static_cast<plain_file*>(ptr->contents.get());
-        new_file->writefile(vec);
+    if (a->dirents.find(words2[i]) == a->dirents.end())
+    {
+        state.cwd = stateHold;
+        file_error error = file_error("ERROR: DIRECTORY DOES NOT EXIST");
+        throw error;
+        return;
     }
-    else {
-        a->mkfile(words2.back());
+    if (state.cwd->contents->type == file_type::PLAIN_TYPE)
+    {
+        file_error error = file_error("ERROR: PATHNAME LEADS TO FILE NOT DIRECTORY");
+        throw error;
     }
-    DEBUGF('c', words);
-    state.cwd = stateHold;
+    it = a->dirents.find(words2[i]);
+    state.cwd = it->second;
+}
+directory* a = static_cast<directory*>(state.cwd->contents.get());
+if (words.size() > 2) {
+    //PROVIDED INIT VAL
+    wordvec vec;
+    for (size_t i = 2; i < words.size(); i++) {
+        vec.push_back(words[i]);
+    }
+    inode_ptr ptr = a->mkfile(words2.back());
+    if (ptr == nullptr) {
+        return;
+    }
+    plain_file* new_file = static_cast<plain_file*>(ptr->contents.get());
+    new_file->writefile(vec);
+}
+else {
+    a->mkfile(words2.back());
+}
+DEBUGF('c', words);
+state.cwd = stateHold;
 }
 
 void fn_mkdir(inode_state& state, const wordvec& words) {
@@ -316,17 +316,17 @@ void fn_mkdir(inode_state& state, const wordvec& words) {
     state.cwd = stateHold;
 }
 
-void fn_prompt (inode_state& state, const wordvec& words) {
-   DEBUGF ('c', state);
-   if (words.size() == 1)
-   {
-       file_error error = file_error("ERROR: NO PROMPT STRING GIVEN");
-       throw error;
-       return;
-   }
-   string new_prompt = words.back();
-   state.prompt(new_prompt);
-   DEBUGF ('c', words);
+void fn_prompt(inode_state& state, const wordvec& words) {
+    DEBUGF('c', state);
+    if (words.size() == 1)
+    {
+        file_error error = file_error("ERROR: NO PROMPT STRING GIVEN");
+        throw error;
+        return;
+    }
+    string new_prompt = words.back();
+    state.prompt(new_prompt);
+    DEBUGF('c', words);
 }
 
 void fn_pwd(inode_state& state, const wordvec& words) {
@@ -340,7 +340,11 @@ void fn_pwd(inode_state& state, const wordvec& words) {
             cout << state.path[i] << endl;
             continue;
         }
-        cout << state.path[i] << "\\" << endl;
+        cout << state.path[i];
+        if (i != 0)
+        {
+            cout << "\\";
+        }
 
     }
 }
