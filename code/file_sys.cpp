@@ -61,12 +61,10 @@ inode::inode(file_type type_): inode_nr (next_inode_nr++) {
    switch (type_) {
       case file_type::PLAIN_TYPE:
            contents = make_shared<plain_file>();
-           printf("LOCATION PLAIN: %p\n", static_cast<void*>(contents.get()));
            contents->type = type_;
            break;
       case file_type::DIRECTORY_TYPE:
            contents = make_shared<directory>();
-           printf("LOCATION DIR: %p\n", static_cast<void *>(contents.get()));
            contents->type = type_;
            break;
       default: assert (false);
@@ -132,9 +130,7 @@ void plain_file::writefile (const wordvec& words) {
 
 size_t directory::size() const {
    size_t size {0};
-   printf("CHECKING MAP SIZE\n");
    size = this->dirents.size();
-   printf("CHECKING SIZE DIR, THIS SIZE IS: %lu\n", size);
    DEBUGF ('i', "size = " << size);
    return size;
 }
@@ -146,7 +142,7 @@ void directory::list_dirents() {
             }
             else {
                 directory* temp = static_cast<directory*>(i->second->contents.get());
-                printf("%lu  %lu  %s\n/", i->second->get_inode_nr(), temp->size()-2, i->first.c_str());
+                printf("%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size()-2, i->first.c_str());
             }
 
     }
@@ -164,7 +160,6 @@ void directory::remove (const string& filename) {
        }
        directory* a = static_cast<directory*>(real_child->contents.get());
        if (a->size()) {
-           printf("HELLOW");
            this->dirents.erase(filename);
            real_child.reset();
        }
@@ -192,7 +187,6 @@ inode_ptr directory::mkdir (const string& dirname) {
    //new directory below this one
    //dirents.insert
    //inode node = inode(type);
-   printf("NEW DIR POS: %p\n", static_cast<void*>(ptr.get()));
    return ptr;
 }
 
@@ -214,15 +208,13 @@ void directory::list_dirents_add_to(stack<inode_ptr>& add_stack, stack<string>& 
         if (i->first != "." && i->first != "..") {
             if (i->second->contents->type == file_type::PLAIN_TYPE) {
                 plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
-                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+                printf("%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
             }
             else {
-                printf("ADD TO ADD STACK\n");
                 add_stack.push(i->second);
                 name_stack.push(i->first);
-                printf("ADD STACK SIZE: %lu\n", add_stack.size());
                 directory* temp = static_cast<directory*>(i->second->contents.get());
-                printf("INODE: %lu  SIZE: %lu  NAME: %s\n", i->second->get_inode_nr(), temp->size() - 2, i->first.c_str());
+                printf("%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size() - 2, i->first.c_str());
             }
         }
 
@@ -234,13 +226,11 @@ void directory::remove_recursive() {
         if (i->first != "." && i->first != "..") {
             inode_ptr real_child = i->second;
             if (i->second->contents->type == file_type::PLAIN_TYPE) {
-                printf("REMOVING FILE\n");
                 this->dirents.erase(i->first);
                 real_child.reset();
             }
             else {
                 directory* a = static_cast<directory*>(real_child->contents.get());
-                printf("START RECURSIVE REMOVE\n");
                 a->remove_recursive();
                 this->dirents.erase(i->first);
                 real_child.reset();

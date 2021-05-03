@@ -67,7 +67,6 @@ void fn_cat (inode_state& state, const wordvec& words) {
    std::map<string, inode_ptr>::iterator it;
    for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
    {
-       cout << "PARSED WORD: " << words2[i] << endl;
        directory* a = static_cast<directory*>(state.cwd->contents.get());
        if (a->dirents.find(words2[i]) == a->dirents.end())
        {
@@ -161,12 +160,10 @@ void fn_ls(inode_state& state, const wordvec& words) {
     DEBUGF('c', state);
     inode_ptr stateHold = state.cwd;
     if (words.size() > 1) {
-        printf("WORDS 1: %s\n", words[1].c_str());
         wordvec words2 = split(words[1], "/\t");
         std::map<string, inode_ptr>::iterator it;
         for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
         {
-            cout << "PARSED WORD: " << words2[i] << endl;
             directory* a = static_cast<directory*>(state.cwd->contents.get());
             if (a->dirents.find(words2[i]) == a->dirents.end())
             {
@@ -202,7 +199,6 @@ void fn_lsr(inode_state& state, const wordvec& words) {
     std::map<string, inode_ptr>::iterator it;
     for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
     {
-        cout << "PARSED WORD: " << words2[i] << endl;
         directory* a = static_cast<directory*>(state.cwd->contents.get());
         if (a->dirents.find(words2[i]) == a->dirents.end())
         {
@@ -228,7 +224,6 @@ void fn_lsr(inode_state& state, const wordvec& words) {
         dir = dir_stack.top();
         directory* temp = static_cast<directory*>(dir->contents.get());
         string name = name_stack.top();
-        printf("%s:\n", name.c_str());
         dir_stack.pop();
         name_stack.pop();
         temp->list_dirents_add_to(dir_stack, name_stack);
@@ -250,7 +245,6 @@ void fn_make(inode_state& state, const wordvec& words) {
     std::map<string, inode_ptr>::iterator it;
     for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
     {
-        cout << "PARSED WORD: " << words2[i] << endl;
         directory* a = static_cast<directory*>(state.cwd->contents.get());
         if (a->dirents.find(words2[i]) == a->dirents.end())
         {
@@ -301,7 +295,6 @@ void fn_mkdir(inode_state& state, const wordvec& words) {
     std::map<string, inode_ptr>::iterator it;
     for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
     {
-        cout << "PARSED WORD: " << words2[i] << endl;
         directory* a = static_cast<directory*>(state.cwd->contents.get());
         if (a->dirents.find(words2[i]) == a->dirents.end())
         {
@@ -319,7 +312,6 @@ void fn_mkdir(inode_state& state, const wordvec& words) {
         state.cwd = it->second;
     }
     directory* a = static_cast<directory*>(state.cwd->contents.get());
-    printf("%s\n", words.back().c_str());
     a->mkdir(words2.back());
     state.cwd = stateHold;
 }
@@ -343,16 +335,12 @@ void fn_pwd(inode_state& state, const wordvec& words) {
     for (long i = 0; static_cast<unsigned>(i)
         < state.path.size(); i++)
     {
-        if (state.path.size() == 0)
-        {
-            cout << "PWD PATHCOPY EMPTY" << endl;
-        }
-        if (i != 0 && static_cast<unsigned long>(i) == state.path.size() - 1)
+        if (static_cast<unsigned long>(i) == state.path.size() - 1)
         {
             cout << state.path[i] << endl;
             continue;
         }
-        cout << state.path[i] << "\\";
+        cout << state.path[i] << "\\" << endl;
 
     }
 }
@@ -364,7 +352,6 @@ void fn_rm (inode_state& state, const wordvec& words) {
    std::map<string, inode_ptr>::iterator it;
    for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
    {
-       cout << "PARSED WORD: " << words2[i] << endl;
        directory* a = static_cast<directory*>(state.cwd->contents.get());
        if (a->dirents.find(words2[i]) == a->dirents.end())
        {
@@ -382,7 +369,6 @@ void fn_rm (inode_state& state, const wordvec& words) {
        state.cwd = it->second;
    }
    directory* a = static_cast<directory*>(state.cwd->contents.get());
-   printf("%s\n", words.back().c_str());
 
    //string remove_word = "";
    a->remove(words2.back());
@@ -395,9 +381,8 @@ void fn_rmr(inode_state& state, const wordvec& words) {
     wordvec words2 = split(words[1], "/\t");
     inode_ptr stateHold = state.cwd;
     std::map<string, inode_ptr>::iterator it;
-    for (int i = 0; static_cast<unsigned long>(i) < words2.size() - 1; i++)
+    for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
     {
-        cout << "PARSED WORD: " << words2[i] << endl;
         directory* a = static_cast<directory*>(state.cwd->contents.get());
         if (a->dirents.find(words2[i]) == a->dirents.end())
         {
