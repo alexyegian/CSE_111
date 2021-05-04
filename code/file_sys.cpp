@@ -29,7 +29,7 @@ inode_state::inode_state() {
     directory* a = static_cast<directory*>(ptr->contents.get());
     a->dirents.insert({ ".", ptr });
     a->dirents.insert({ "..", ptr });
-    path.push_back("\\");
+    path.push_back("/");
     //new directory below this one
     //dirents.insert
     //inode node = inode(type);

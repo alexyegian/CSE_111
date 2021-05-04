@@ -4,6 +4,7 @@
 #include "commands.h"
 #include "debug.h"
 #include "file_sys.h"
+#include <string>
 command_hash cmd_hash {
    {"cat"   , fn_cat   },
    {"cd"    , fn_cd    },
@@ -153,7 +154,18 @@ void fn_echo (inode_state& state, const wordvec& words) {
 void fn_exit (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   throw ysh_exit();
+   try
+   {
+       int number = stoi(words.back());
+       exec::status(number);
+       throw ysh_exit();
+   }
+   catch (...)
+   {
+       exec::status(127);
+       throw ysh_exit();
+
+   }
 }
 
 void fn_ls(inode_state& state, const wordvec& words) {
@@ -324,8 +336,19 @@ void fn_prompt(inode_state& state, const wordvec& words) {
         throw error;
         return;
     }
-    string new_prompt = words.back();
-    state.prompt(new_prompt);
+    string temp = "";
+    for (long i = 1; static_cast<unsigned>(i)
+        < words.size(); i++)
+    {
+        if (static_cast<unsigned long>(i) == words.size() - 1)
+        {
+            temp.append(words[i]);
+            continue;
+        }
+        temp.append(words[i]);
+        temp.append(" ");
+    }
+    state.prompt(temp);
     DEBUGF('c', words);
 }
 
@@ -343,7 +366,7 @@ void fn_pwd(inode_state& state, const wordvec& words) {
         cout << state.path[i];
         if (i != 0)
         {
-            cout << "\\";
+            cout << "/";
         }
 
     }
@@ -385,6 +408,11 @@ void fn_rmr(inode_state& state, const wordvec& words) {
     wordvec words2 = split(words[1], "/\t");
     inode_ptr stateHold = state.cwd;
     std::map<string, inode_ptr>::iterator it;
+    bool isNested = false;
+    if (words2.size() > 0)
+    {
+        isNested = true;
+    }
     for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
     {
         directory* a = static_cast<directory*>(state.cwd->contents.get());
@@ -406,6 +434,13 @@ void fn_rmr(inode_state& state, const wordvec& words) {
     inode_ptr dir = state.cwd;
     directory* temp = static_cast<directory*>(dir->contents.get());
     temp->remove_recursive();
+    if (isNested == true)
+    {
+        string dirName = it->first;
+        it = temp->dirents.find("..");
+        state.cwd = it->second;
+        state.cwd->contents->remove(dirName);
+    }
     DEBUGF('c', words);
     state.cwd = stateHold;
 }
