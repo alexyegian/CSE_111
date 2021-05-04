@@ -154,18 +154,22 @@ void fn_echo (inode_state& state, const wordvec& words) {
 void fn_exit (inode_state& state, const wordvec& words) {
    DEBUGF ('c', state);
    DEBUGF ('c', words);
-   try
+   if (words.size() > 1)
    {
-       int number = stoi(words.back());
-       exec::status(number);
-       throw ysh_exit();
-   }
-   catch (...)
-   {
-       exec::status(127);
-       throw ysh_exit();
+       try
+       {
+           int number = stoi(words.back());
+           exec::status(number);
+           throw ysh_exit();
+       }
+       catch (...)
+       {
+           exec::status(127);
+           throw ysh_exit();
 
+       }
    }
+   throw ysh_exit();
 }
 
 void fn_ls(inode_state& state, const wordvec& words) {
@@ -228,8 +232,16 @@ void fn_lsr(inode_state& state, const wordvec& words) {
             throw error;
         }
     }
+    cout << state.cwd << endl;
     inode_ptr dir = state.cwd;
-    name_stack.push(state.path[state.path.size() - 1]);
+    if (state.path.size() != 0)
+    {
+        name_stack.push(state.path[state.path.size() - 1]);
+    }
+    else
+    {
+        name_stack.push("/");
+    }
     stack <inode_ptr>  dir_stack;
     dir_stack.push(dir);
     while (dir_stack.empty() != true) {
