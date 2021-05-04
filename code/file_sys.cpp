@@ -159,9 +159,14 @@ void directory::remove (const string& filename) {
            return;
        }
        directory* a = static_cast<directory*>(real_child->contents.get());
-       if (a->size()) {
+       if (a->size() == 2) {
            this->dirents.erase(filename);
            real_child.reset();
+       }
+       else
+       {
+           file_error error = file_error("ERROR");
+           throw error;
        }
 
    }
@@ -171,7 +176,8 @@ void directory::remove (const string& filename) {
 inode_ptr directory::mkdir (const string& dirname) {
    DEBUGF ('i', dirname);
    if (this->dirents.find(dirname) != dirents.end()) {
-       //ERROR DIRNAME ALREADY EXISTS
+       file_error error = file_error("ERROR: PATHNAME LEADS TO FILE OR DIRECTORY");
+       throw error;
        return nullptr;
    }
     //MAKE DIRETORY
@@ -194,7 +200,7 @@ inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
    if (this->dirents.find(filename) != dirents.end()) {
        //ERROR DIRNAME ALREADY EXISTS
-       return nullptr;
+       return this->dirents.find(filename)->second;
    }
    file_type type_ = file_type::PLAIN_TYPE;
    inode_ptr ptr = make_shared<inode>(type_);
