@@ -196,8 +196,10 @@ void fn_ls(inode_state& state, const wordvec& words) {
         return;
     }
     inode_ptr stateHold = state.cwd;
+    string base_name = "";
     if (words.size() > 1) {
         wordvec words2 = split(words[1], "/\t");
+        base_name = words2[words2.size() - 1];
         std::map<string, inode_ptr>::iterator it;
         for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
         {
@@ -219,6 +221,9 @@ void fn_ls(inode_state& state, const wordvec& words) {
             state.cwd = it->second;
         }
     }
+    else {
+        base_name = state.path[state.path.size() - 1];
+    }
      if (state.cwd->contents->type == file_type::PLAIN_TYPE)
      {
         state.cwd = stateHold;
@@ -226,6 +231,7 @@ void fn_ls(inode_state& state, const wordvec& words) {
         throw error;
      }
      directory* dir = static_cast<directory*>(state.get_cwd()->contents.get());
+     printf("%s:\n", base_name.c_str());
      dir->list_dirents();
      DEBUGF('c', words);
      state.cwd = stateHold;
@@ -240,7 +246,7 @@ void fn_lsr(inode_state& state, const wordvec& words) {
     }
     inode_ptr stateHold = state.cwd;
     stack<string> name_stack;
-    if (words.size() > 1) {
+    if (words.size() > 1 && words[1] != "/") {
         wordvec words2 = split(words[1], "/\t");
         std::map<string, inode_ptr>::iterator it;
         for (int i = 0; static_cast<unsigned long>(i) < words2.size(); i++)
@@ -262,6 +268,13 @@ void fn_lsr(inode_state& state, const wordvec& words) {
                 throw error;
             }
         }
+    }
+    else if (words.size() > 1 && words[1] == "/") {
+        for (unsigned long i = 1; i < state.path.size(); i++) {
+           state.path.pop_back();
+        }
+        state.cwd = state.root;
+        inode_ptr dir = state.cwd;
     }
     inode_ptr dir = state.cwd;
     if (state.path.size() != 0)
@@ -278,6 +291,8 @@ void fn_lsr(inode_state& state, const wordvec& words) {
         dir = dir_stack.top();
         directory* temp = static_cast<directory*>(dir->contents.get());
         string name = name_stack.top();
+
+        printf("%s:\n", name.c_str());
         dir_stack.pop();
         name_stack.pop();
         temp->list_dirents_add_to(dir_stack, name_stack);
@@ -508,6 +523,16 @@ void fn_rmr(inode_state& state, const wordvec& words) {
     std::map<string, inode_ptr>::iterator it;
     bool isNested = false;
     if (words.size() > 1) {
+        if (words[1] == "/") {
+            state.cwd = state.root;
+            for (unsigned long i = 1; i < state.path.size(); i++) {
+                state.path.pop_back();
+            }
+            inode_ptr dir = state.cwd;
+            directory* temp = static_cast<directory*>(dir->contents.get());
+            temp->remove_recursive();
+            return;
+        }
         wordvec words2 = split(words[1], "/\t");
         if (words2.size() > 0)
         {

@@ -138,11 +138,11 @@ void directory::list_dirents() {
     for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
             if (i->second->contents->type == file_type::PLAIN_TYPE) {
                 plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
-                printf("%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+                printf("\t%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
             }
             else {
                 directory* temp = static_cast<directory*>(i->second->contents.get());
-                printf("%lu  %lu  %s%s\n", i->second->get_inode_nr(), temp->size()-2, i->first.c_str(), "/");
+                printf("\t%lu  %lu  %s%s\n", i->second->get_inode_nr(), temp->size()-2, i->first.c_str(), "/");
             }
 
     }
@@ -213,7 +213,7 @@ void directory::list_dirents_add_to(stack<inode_ptr>& add_stack, stack<string>& 
     for (auto i = this->dirents.begin(); i != this->dirents.end(); ++i) {
         if (i->second->contents->type == file_type::PLAIN_TYPE) {
             plain_file* temp = static_cast<plain_file*>(i->second->contents.get());
-            printf("%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
+            printf("\t%lu  %lu  %s\n", i->second->get_inode_nr(), temp->size(), i->first.c_str());
         }
         else {
              if (i->first != "." && i->first != "..") {
@@ -221,7 +221,7 @@ void directory::list_dirents_add_to(stack<inode_ptr>& add_stack, stack<string>& 
                  name_stack.push(i->first);
              }
              directory* temp = static_cast<directory*>(i->second->contents.get());
-             printf("%lu  %lu  %s%s\n", i->second->get_inode_nr(), temp->size() - 2, i->first.c_str(), "/");
+             printf("\t%lu  %lu  %s%s\n", i->second->get_inode_nr(), temp->size() - 2, i->first.c_str(), "/");
         }
     }
 }
