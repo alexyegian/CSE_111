@@ -45,6 +45,8 @@ class listmap {
       iterator erase (iterator position);
       iterator begin() { return anchor()->next; }
       iterator end() { return anchor(); }
+      void printValue(const mapped_type&);
+      void printall();
       bool empty() const { return anchor_.next == &anchor_; }
       operator bool() const { return not empty(); }
 };

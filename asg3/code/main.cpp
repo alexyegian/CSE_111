@@ -56,16 +56,31 @@ int main (int argc, char** argv) {
        cout << "input: \"" << line << "\"" << endl;
        smatch result;
        if (regex_search(line, result, comment_regex)) {
-           cout << "Comment or empty line." << endl;
+           //cout << "Comment or empty line." << endl;
+           const string asdf = "b";
+           str_str_pair testPair (asdf, asdf);
+           test.printValue(testPair.second);
        }
        else if (regex_search(line, result, key_value_regex)) {
            cout << "key  : \"" << result[1] << "\"" << endl;
            cout << "value: \"" << result[2] << "\"" << endl;
-           pair const newPair = pair(result[1], result[2]);
+           const string key = result[1];
+           const string value = result[2];
+           str_str_pair  newPair (key,value);
            test.insert(newPair);
        }
        else if (regex_search(line, result, trimmed_regex)) {
            cout << "query: \"" << result[1] << "\"" << endl;
+           auto findResult = test.find(result[1]);
+           auto holdNode = findResult.get_where();
+           if (findResult == test.end())
+           {
+               cout << result[1] << ": key not found" << endl;
+           }
+           else
+           {
+               cout << holdNode->value.first << " = " << holdNode->value.second << endl;
+           }
        }
        else {
            assert(false and "This can not happen.");

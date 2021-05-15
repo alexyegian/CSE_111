@@ -38,7 +38,7 @@ listmap<key_t, mapped_t, less_t>::insert(const value_type& pair) {
             //x->prev->next = *new_node;
             m->prev->next = new_node;
             m->prev = new_node;
-            return iterator();
+            return --x;
         }
         else if (!less(x->first, pair.first)) {
             x->second = pair.second;
@@ -49,17 +49,60 @@ listmap<key_t, mapped_t, less_t>::insert(const value_type& pair) {
     node* new_node = new node(m, m->prev, pair);
     m->prev->next = new_node;
     m->prev = new_node;
-    return iterator();
+    return --x;
 }
 
-//
-// iterator listmap::erase (iterator position)
-//
 template <typename key_t, typename mapped_t, class less_t>
-typename listmap<key_t,mapped_t,less_t>::iterator
-listmap<key_t,mapped_t,less_t>::erase (iterator position) {
-   DEBUGF ('l', &*position);
-   return iterator();
+typename listmap<key_t, mapped_t, less_t>::iterator
+listmap<key_t, mapped_t, less_t>::find(const key_type& key) {
+    auto x = begin();
+    for (; x != end(); ++x) {
+        if (less(key, x->first)) continue;
+        else if (!less(x->first, key)) {
+            return x;
+        }
+    }
+    return end();
+}
+
+template <typename key_t, typename mapped_t, class less_t>
+void listmap<key_t, mapped_t, less_t>::printValue(const mapped_type& value) {
+    auto x = begin();
+    for (; x != end(); ++x) {
+        if (less(value, x->second)) continue;
+        else if (!less(x->second, value)) {
+            cout << x->first << ": " << x->second << endl;
+        }
+    }
+}
+
+template <typename key_t, typename mapped_t, class less_t>
+void listmap<key_t, mapped_t, less_t>::printall() {
+    auto beg = begin();
+    for (; beg != end(); ++beg) {
+        cout << *beg << endl;
+    }
+}
+
+template <typename key_t, typename mapped_t, class less_t>
+typename listmap<key_t, mapped_t, less_t>::iterator
+listmap<key_t, mapped_t, less_t>::erase(iterator position) {
+    DEBUGF('l', &*position);
+    auto x = begin();
+    for (; x != end(); ++x) {
+        if (x == position) {
+            node* del = x.get_where();
+            //printf("DELETE THIS EL:");
+            cout << del->value << endl;
+            //delete here
+            del->prev->next = del->next;
+            //free(del->value);
+            free(del);
+            ++x;
+            return x;
+        }
+    }
+    return x;
 }
 
 
