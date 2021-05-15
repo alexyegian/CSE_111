@@ -72,6 +72,7 @@ class listmap<key_t,mapped_t,less_t>::iterator {
          return this->where != that.where;
       }
       operator bool() const { return where != nullptr; }
+      node* get_where() { return where; }
 };
 
 #include "listmap.tcc"
