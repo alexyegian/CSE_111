@@ -71,7 +71,7 @@ void listmap<key_t, mapped_t, less_t>::printValue(const mapped_type& value) {
     for (; x != end(); ++x) {
         if (less(value, x->second)) continue;
         else if (!less(x->second, value)) {
-            cout << x->first << ": " << x->second << endl;
+            cout << x->first << " = " << x->second << endl;
         }
     }
 }
@@ -80,7 +80,7 @@ template <typename key_t, typename mapped_t, class less_t>
 void listmap<key_t, mapped_t, less_t>::printall() {
     auto beg = begin();
     for (; beg != end(); ++beg) {
-        cout << *beg << endl;
+        cout << beg->first << " = " << beg->second << endl;
     }
 }
 
