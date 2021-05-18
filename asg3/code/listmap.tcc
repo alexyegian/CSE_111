@@ -11,10 +11,13 @@
 
 //
 // listmap::~listmap()
-//
 template <typename key_t, typename mapped_t, class less_t>
-listmap<key_t,mapped_t,less_t>::~listmap() {
-   DEBUGF ('l', reinterpret_cast<const void*> (this));
+listmap<key_t, mapped_t, less_t>::~listmap() {
+    DEBUGF('l', reinterpret_cast<const void*> (this));
+    iterator itor = begin();
+    while (itor != end()) {
+        itor = erase(itor);
+    }
 }
 
 //
@@ -92,13 +95,10 @@ listmap<key_t, mapped_t, less_t>::erase(iterator position) {
     for (; x != end(); ++x) {
         if (x == position) {
             node* del = x.get_where();
-            //printf("DELETE THIS EL:");
-            cout << del->value << endl;
-            //delete here
-            del->prev->next = del->next;
-            //free(del->value);
-            free(del);
             ++x;
+            del->prev->next = del->next;
+            del->next->prev = del->prev;
+            delete del;
             return x;
         }
     }
