@@ -1,3 +1,5 @@
+//Alex Soliz ID: amsoliz
+//Alexander Yegian ID: ayegian
 // $Id: debug.h,v 1.5 2020-11-12 18:37:41-08 - - $
 
 #ifndef __DEBUG_H__
