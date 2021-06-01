@@ -21,16 +21,11 @@ struct cxi_exit: public exception {};
 void reply_put(accepted_socket& client_sock, cxi_header& header) {
     //ALWAYS ACK NOW ADD IN ERRORS LATER
     header.command = cxi_command::ACK;
-    
-    size_t host_nbytes = htonl(header.nbytes);
-    auto rec_buff = make_unique<char[]>(host_nbytes + 1);
-    recv_packet(client_sock, rec_buff.get(), host_nbytes);
-    rec_buff[host_nbytes] = '\0';
-    
-    
-    //char* rec_buff = new char[header.nbytes];
-    //recv_packet(client_sock, &rec_buff, sizeof header.nbytes);
 
+    //size_t host_nbytes = htonl(header.nbytes);
+    auto rec_buff = make_unique<char[]>(header.nbytes + 1);
+    recv_packet(client_sock, rec_buff.get(), header.nbytes);
+    rec_buff[header.nbytes] = '\0';
     string filenameStr;
     string holdStr;
     for (int i = 0; i < 59; i++)
@@ -40,7 +35,7 @@ void reply_put(accepted_socket& client_sock, cxi_header& header) {
         {
             holdStr = holdStr + header.filename[i];
         }
-        else 
+        else
         {
             filenameStr = filenameStr + holdStr + header.filename[i];
             holdStr = "";
@@ -48,14 +43,85 @@ void reply_put(accepted_socket& client_sock, cxi_header& header) {
     }
     //check if file exists, handle it if it does
     ofstream myFile(filenameStr);
-    outlog << "file made" << endl;
-    myFile.write(reinterpret_cast<char*>(&rec_buff), header.nbytes);
-    outlog << "file write" << endl;
+    myFile.write(reinterpret_cast<char*>(rec_buff.get()), header.nbytes);
     myFile.close();
-    outlog << "cxid asdf" << endl;
-    delete[] rec_buff;
     header.nbytes = 0;
     send_packet(client_sock, &header, sizeof header);
+}
+
+void reply_rm(accepted_socket& client_sock, cxi_header& header) {
+    //ALWAYS ACK NOW ADD IN ERRORS LATER
+    header.command = cxi_command::ACK;
+    string filenameStr;
+    string holdStr;
+    for (int i = 0; i < 59; i++)
+    {
+        //check if filename has a slash
+        if (header.filename[i] == ' ')
+        {
+            holdStr = holdStr + header.filename[i];
+        }
+        else
+        {
+            filenameStr = filenameStr + holdStr + header.filename[i];
+            holdStr = "";
+        }
+    }
+    //check if file exists, handle it if it does
+    if (remove(header.filename) != 0)
+    {
+        perror("File deletion failed"); //???
+        header.command = cxi_command::NAK;
+        send_packet(client_sock, &header, sizeof header);
+    }
+    else
+    {
+        send_packet(client_sock, &header, sizeof header);
+    }
+}
+
+void reply_get(accepted_socket& client_sock, cxi_header& header) {
+    string filenameStr;
+    string holdStr;
+    for (int i = 0; i < 59; i++)
+    {
+        //check if filename has a slash
+        if (header.filename[i] == ' ')
+        {
+            holdStr = holdStr + header.filename[i];
+        }
+        else
+        {
+            filenameStr = filenameStr + holdStr + header.filename[i];
+            holdStr = "";
+        }
+    }
+    //check if file exists, handle it if it does
+    outlog << "FILENAME: " << filenameStr << endl;
+    std::ifstream pFile(filenameStr.c_str(), std::ifstream::in);
+    if (pFile.fail()) 
+    {
+        header.command = cxi_command::NAK;
+        send_packet(client_sock, &header, sizeof header);
+        return;
+    }
+
+    pFile.seekg(0, ios::end);
+    uint32_t file_size = pFile.tellg();
+    uint32_t nbytes = file_size;
+    header.nbytes = nbytes;
+    std::string temp;
+    pFile.seekg(0, ios::beg);
+    std::string line;
+    while (std::getline(pFile, line))
+    {
+        temp += line + "\n";
+    }
+    outlog << "TEMP: " << temp << endl;
+    const char* data = temp.c_str();
+    outlog << "DATA: " << data << endl;
+    send_packet(client_sock, &header, sizeof header);
+    send_packet(client_sock, data, header.nbytes);
 }
 
 void reply_ls (accepted_socket& client_sock, cxi_header& header) {
@@ -100,6 +166,14 @@ void run_server (accepted_socket& client_sock) {
                break;
             case cxi_command::PUT: {
                 reply_put(client_sock, header);
+                break;
+            }
+            case cxi_command::RM: {
+                reply_rm(client_sock, header);
+                break;
+            }
+            case cxi_command::GET: {
+                reply_get(client_sock, header);
                 break;
             }
             default:
